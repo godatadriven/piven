@@ -1,4 +1,5 @@
 import tensorflow as tf
+from piven.layers import Piven
 from typing import Tuple
 
 
@@ -66,23 +67,6 @@ def build_keras_piven(
         )(x)
         if dropout_rate_cur > 0:
             x = tf.keras.layers.Dropout(dropout_rate_cur)(x)
-    # Add PIVEN layers
-    pi = tf.keras.layers.Dense(
-        2,
-        activation="linear",
-        kernel_initializer=tf.keras.initializers.GlorotUniform(),
-        bias_initializer=tf.keras.initializers.Constant(value=[3.0, -3.0]),
-        name="pi",
-    )(
-        x
-    )  # pi initialization using bias
-    v = tf.keras.layers.Dense(
-        1,
-        activation="sigmoid",
-        name="v",
-        kernel_initializer=tf.keras.initializers.GlorotNormal(),
-    )(x)
-    # Output layer
-    output = tf.keras.layers.Concatenate(name="output")([pi, v])
+    output = Piven()(x)
     model = tf.keras.models.Model(inputs=input_variable, outputs=[output], name="PIVEN")
     return model
