@@ -4,7 +4,7 @@ setuptools.setup(
     name="piven",
     version="0.2.0",
     description="Prediction Intervals with specific value prediction",
-    url="placeholder.com",
+    url="https://gitlab.com/jasperginn/piven.py",
     author="Jasper Ginn",
     author_email="jasperginn@godatadriven.com",
     package_dir={"": "src"},
