@@ -1,10 +1,9 @@
-from typing import Union
+from typing import Union, Callable
 import pytest
 import numpy as np
 from piven.wrappers import PivenModelWrapper
 from piven.transformers import PivenTransformedTargetRegressor
 from piven.metrics import picp, mpiw
-from piven.layers import Piven
 from piven.loss import piven_loss
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -30,16 +29,35 @@ def mock_data() -> Union[np.array, np.array, np.array, np.array]:
 
 
 @pytest.fixture(scope="function")
-def keras_model_function() -> tf.python.keras.engine.functional.Functional:
-    def keras_model(input_size, dropout_rate):
+def keras_model_function() -> Callable:
+    def keras_model(input_size, hidden_units=(128, 128)):
         i = tf.keras.layers.Input(shape=(input_size,))
-        x = tf.keras.layers.Dense(128)(i)
-        x = tf.keras.layers.Dense(64)(x)
-        x = tf.keras.layers.Dropout(dropout_rate)(x)
-        o = Piven()(x)
+        x = tf.keras.layers.Dense(
+            hidden_units[0],
+            kernel_initializer=tf.keras.initializers.RandomNormal(0, 0.2),
+        )(i)
+        x = tf.keras.layers.Dense(
+            hidden_units[1],
+            kernel_initializer=tf.keras.initializers.RandomNormal(0, 0.2),
+        )(x)
+        # o = Piven()(x)
+        pi = tf.keras.layers.Dense(
+            2,
+            activation="linear",
+            kernel_initializer=tf.keras.initializers.GlorotUniform(),
+            bias_initializer=tf.keras.initializers.Constant(value=[3.0, -3.0]),
+            name="pi",
+        )(x)
+        v = tf.keras.layers.Dense(
+            1,
+            activation="sigmoid",
+            name="v",
+            kernel_initializer=tf.keras.initializers.GlorotNormal(),
+        )(x)
+        o = tf.keras.layers.Concatenate(name="output")([pi, v])
         m = tf.keras.models.Model(inputs=i, outputs=[o])
         m.compile(
-            optimizer="adam",
+            optimizer=tf.keras.optimizers.Adam(lr=0.0007),
             loss=piven_loss(True, 15.0, 160.0, 0.05),
             metrics=[picp, mpiw],
         )
@@ -49,18 +67,20 @@ def keras_model_function() -> tf.python.keras.engine.functional.Functional:
 
 
 @pytest.fixture(scope="function")
-def piven_model_wrapper(keras_model_function) -> PivenModelWrapper:
-    return PivenModelWrapper(build_fn=keras_model_function(1, 0.1))
+def piven_model_wrapper(keras_model_function: Callable) -> PivenModelWrapper:
+    return PivenModelWrapper(
+        build_fn=keras_model_function, input_size=1, hidden_units=(128, 128)
+    )
 
 
 @pytest.fixture(scope="function")
-def piven_model_pipeline(piven_model_wrapper) -> Pipeline:
+def piven_model_pipeline(piven_model_wrapper: PivenModelWrapper) -> Pipeline:
     return Pipeline([("scaler", StandardScaler()), ("model", piven_model_wrapper)])
 
 
 @pytest.fixture(scope="function")
 def transformed_piven_regressor(
-    piven_model_pipeline
+    piven_model_pipeline: Pipeline
 ) -> PivenTransformedTargetRegressor:
     return PivenTransformedTargetRegressor(
         regressor=piven_model_pipeline, transformer=StandardScaler()

@@ -2,19 +2,8 @@ import types
 import copy
 from typing import Tuple, Union
 import numpy as np
-from piven.utils import piven_loss
 from tensorflow.keras.wrappers.scikit_learn import KerasRegressor
 from tensorflow.python.keras.models import Sequential
-
-import tensorflow as tf
-from piven.metrics import picp, mpiw
-from piven.layers import Piven
-
-# Dump custom metrics, loss and layers
-# Need to do this when saving models.
-tf.keras.utils.get_custom_objects().update(
-    {"picp": picp, "mpiw": mpiw, "piven_loss": piven_loss, "Piven": Piven}
-)
 
 
 class PivenModelWrapper(KerasRegressor):
@@ -42,9 +31,7 @@ class PivenModelWrapper(KerasRegressor):
         fit_args = copy.deepcopy(self.filter_sk_params(Sequential.fit))
         fit_args.update(kwargs)
 
-        history = self.model.fit(x, y, **fit_args)
-
-        return history
+        return self.model.fit(x, y, **fit_args)
 
     def predict(
         self, x, return_prediction_intervals=True, **kwargs
@@ -56,7 +43,8 @@ class PivenModelWrapper(KerasRegressor):
         y_upper_pred = yhat[:, 0]
         y_lower_pred = yhat[:, 1]
         y_value_pred = yhat[:, 2]
+        y_out = y_value_pred * y_upper_pred + (1 - y_value_pred) * y_lower_pred
         if return_prediction_intervals:
-            return y_value_pred, y_lower_pred, y_upper_pred
+            return y_out.flatten(), y_lower_pred.flatten(), y_upper_pred.flatten()
         else:
-            return y_value_pred
+            return y_out.flatten()

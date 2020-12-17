@@ -1,6 +1,8 @@
+from typing import Union
 from sklearn.utils.validation import check_is_fitted
 from sklearn.utils.validation import _deprecate_positional_args
 from sklearn.compose import TransformedTargetRegressor as _TTR
+from sklearn.pipeline import Pipeline
 from piven.wrappers import PivenModelWrapper
 
 
@@ -8,7 +10,7 @@ class PivenTransformedTargetRegressor(_TTR):
     @_deprecate_positional_args
     def __init__(
         self,
-        regressor: PivenModelWrapper = None,
+        regressor: Union[PivenModelWrapper, Pipeline] = None,
         *,
         transformer=None,
         func=None,
