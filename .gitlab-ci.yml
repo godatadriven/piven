@@ -2,8 +2,23 @@ stages:
   - static analysis
   - test
 
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+image: python:3.7
+
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+before_script:
+  - python -V
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+
 static:
-  image: python:3.7
   stage: static analysis
   script:
     - pip install black==20.8b1 flake8==3.8.4
@@ -11,7 +26,6 @@ static:
     - flake8 --max-line-length=120 src/piven/*.py
 
 unit_tests:
-  image: python:3.7
   stage: test
   script:
     - pwd
