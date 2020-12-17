@@ -1,9 +1,18 @@
+from typing import Union, Callable
 import pytest
 import numpy as np
+from piven.wrappers import PivenModelWrapper
+from piven.transformers import PivenTransformedTargetRegressor
+from piven.metrics import picp, mpiw
+from piven.loss import piven_loss
+from piven.regressors import build_keras_piven
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+import tensorflow as tf
 
 
 @pytest.fixture(scope="module")
-def mock_data():
+def mock_data() -> Union[np.array, np.array, np.array, np.array]:
     # fix seed
     seed = 26783
     np.random.seed(seed)
@@ -17,6 +26,44 @@ def mock_data():
     y_train = y[:400]
     x_valid = x[400:, :].reshape(-1, 1)
     y_valid = y[400:]
-    y_train = np.stack((y_train, y_train), axis=1)  # make this 2d so will be accepted
-    y_valid = np.stack((y_valid, y_valid), axis=1)
     return x_train, x_valid, y_train, y_valid
+
+
+@pytest.fixture(scope="function")
+def keras_model_function() -> Callable:
+    def keras_model(input_size, hidden_units=(128, 128)):
+        m = build_keras_piven(
+            input_dim=input_size,
+            dense_units=hidden_units,
+            dropout_rate=(0.0, 0.0),
+            activation="relu",
+        )
+        m.compile(
+            optimizer=tf.keras.optimizers.Adam(lr=0.0007),
+            loss=piven_loss(25.0, 160.0, 0.05),
+            metrics=[picp, mpiw],
+        )
+        return m
+
+    return keras_model
+
+
+@pytest.fixture(scope="function")
+def piven_model_wrapper(keras_model_function: Callable) -> PivenModelWrapper:
+    return PivenModelWrapper(
+        build_fn=keras_model_function, input_size=1, hidden_units=(128, 128)
+    )
+
+
+@pytest.fixture(scope="function")
+def piven_model_pipeline(piven_model_wrapper: PivenModelWrapper) -> Pipeline:
+    return Pipeline([("scaler", StandardScaler()), ("model", piven_model_wrapper)])
+
+
+@pytest.fixture(scope="function")
+def transformed_piven_regressor(
+    piven_model_pipeline: Pipeline
+) -> PivenTransformedTargetRegressor:
+    return PivenTransformedTargetRegressor(
+        regressor=piven_model_pipeline, transformer=StandardScaler()
+    )
