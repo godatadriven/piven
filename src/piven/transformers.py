@@ -1,10 +1,10 @@
 from sklearn.utils.validation import check_is_fitted
 from sklearn.utils.validation import _deprecate_positional_args
 
-from sklearn.compose import TransformedTargetRegressor
+from sklearn.compose import TransformedTargetRegressor as _TTR
 
 
-class PivenTransformedTargetRegressor(TransformedTargetRegressor):
+class PivenTransformedTargetRegressor(_TTR):
     @_deprecate_positional_args
     def __init__(
         self,
