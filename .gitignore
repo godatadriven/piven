@@ -1,0 +1,19 @@
+# Pycharm
+.idea
+
+# Python build files
+__pycache__
+/src/piven.egg-info
+
+# pre-commit modules
+.mypy_cache
+
+# Pytest
+.pytest_cache
+
+# Todos
+TODO.txt
+update.txt
+
+# Notebooks
+notebooks/.ipynb_checkpoints
