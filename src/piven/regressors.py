@@ -8,11 +8,12 @@ from sklearn.exceptions import NotFittedError
 
 import tensorflow as tf
 from piven.metrics import picp, mpiw
+from piven.layers import Piven
 
-# Dump custom metrics
+# Dump custom metrics, loss and layers
 # Need to do this when saving models.
 tf.keras.utils.get_custom_objects().update(
-    {"picp": picp, "mpiw": mpiw, "piven_loss": piven_loss}
+    {"picp": picp, "mpiw": mpiw, "piven_loss": piven_loss, "Piven": Piven}
 )
 
 
