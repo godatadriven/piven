@@ -3,7 +3,7 @@ import json
 from typing import Tuple, List, Union
 import numpy as np
 from sklearn.base import BaseEstimator, RegressorMixin
-from piven.utils import build_keras_piven, piven_loss
+from piven.loss import build_keras_piven, piven_loss
 from sklearn.exceptions import NotFittedError
 
 import tensorflow as tf
