@@ -1,0 +1,21 @@
+stages:
+  - static analysis
+  - test
+
+static:
+  image: python:3.7
+  stage: static analysis
+  script:
+    - pip install black==20.8b1 flake8==3.8.4
+    - black src/piven/*.py
+    - flake8 --max-line-length=120 src/piven/*.py
+
+unit_tests:
+  image: python:3.7
+  stage: test
+  script:
+    - pwd
+    - ls -l
+    - export PYTHONPATH="$PYTHONPATH:."
+    - python -c "import sys;print(sys.path)"
+    - pytest
