@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="piven",
-    version="0.1.0",
+    version="0.2.0",
     description="Prediction Intervals with specific value prediction",
     url="placeholder.com",
     author="Jasper Ginn",
