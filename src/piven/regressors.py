@@ -1,6 +1,7 @@
 from typing import Tuple
 from piven.layers import Piven
 import tensorflow as tf
+from tensorflow.python.keras.engine.functional import Functional
 
 
 def build_keras_piven(
@@ -8,7 +9,7 @@ def build_keras_piven(
     dense_units: Tuple[int, ...] = (64,),
     dropout_rate: Tuple[float, ...] = (0.1,),
     activation: str = "relu",
-):  # -> tf.keras.engine.functional.Functional:
+) -> Functional:
     """Create a PIVEN model"""
     input_variable = tf.keras.layers.Input(shape=(input_dim,))
     x = tf.keras.layers.Dense(
