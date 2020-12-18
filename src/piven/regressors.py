@@ -9,6 +9,8 @@ def build_keras_piven(
     dense_units: Tuple[int, ...] = (64,),
     dropout_rate: Tuple[float, ...] = (0.1,),
     activation: str = "relu",
+    bias_init_low: float = -3.0,
+    bias_init_high: float = 3.0,
 ) -> Functional:
     """Create a PIVEN model"""
     input_variable = tf.keras.layers.Input(shape=(input_dim,))
@@ -30,6 +32,6 @@ def build_keras_piven(
         )(x)
         if dropout_rate_cur > 0:
             x = tf.keras.layers.Dropout(dropout_rate_cur)(x)
-    output = Piven()(x)
+    output = Piven(init_pi_lower=bias_init_low, init_pi_upper=bias_init_high)(x)
     model = tf.keras.models.Model(inputs=input_variable, outputs=[output], name="PIVEN")
     return model
