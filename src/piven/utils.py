@@ -21,17 +21,17 @@ tf.keras.utils.get_custom_objects().update(
 
 def _save_piven_model_wrapper(
     model: PivenModelWrapper, path: Path, file_name: str = None
-):
+) -> str:
     """Save a keras model that is wrapped in a PivenModelWrapper class"""
     if file_name is None:
         file_name = "piven_model.h5"
     tf.keras.models.save_model(model.model, path / file_name)
     with (path / "piven_model_config.json").open("w") as outfile:
         json.dump(model.sk_params, outfile)
-    return model
+    return str(path / "piven_model_config.json")
 
 
-def _unset_sklearn_pipeline(obj: Pipeline, path: Path):
+def _unset_sklearn_pipeline(obj: Pipeline, path: Path) -> Pipeline:
     """Unset a piven model from an sklearn pipeline and return the result"""
     for idx, step in enumerate(obj.steps):
         if isinstance(step[-1], PivenModelWrapper):
@@ -42,23 +42,23 @@ def _unset_sklearn_pipeline(obj: Pipeline, path: Path):
 
 def _save_model_pipeline(
     obj: Union[Pipeline, StandardScaler], path: Path, file_name: str
-):
+) -> str:
     """Save an sklearn pipeline"""
     # If piven model in pipeline
     if isinstance(obj, Pipeline):
         obj = _unset_sklearn_pipeline(obj, path=path)
     joblib.dump(obj, path / file_name)
-    return obj
+    return str(path / file_name)
 
 
 def _save_piven_transformed_target_regressor(
     regressor: PivenTransformedTargetRegressor, path: Path, file_name: str
-):
+) -> str:
     """Save a piven transformed target regressor"""
     regressor.regressor = None
     regressor.regressor_ = _unset_sklearn_pipeline(regressor.regressor_, path=path)
     joblib.dump(regressor, path / file_name)
-    return regressor
+    return str(path / file_name)
 
 
 def _load_piven_model_wrapper(
@@ -69,6 +69,42 @@ def _load_piven_model_wrapper(
     pmw = PivenModelWrapper(build_fn, **model_config)
     pmw.model = model
     return pmw
+
+
+def save_piven_model(
+    model: Union[PivenTransformedTargetRegressor, PivenModelWrapper, Pipeline],
+    path: str,
+) -> str:
+    """Save a piven model to a folder"""
+    ppath = Path(path)
+    if not ppath.is_dir():
+        raise NotADirectoryError(f"Directory {path} does not exist.")
+    if not isinstance(
+        model, (PivenTransformedTargetRegressor, PivenModelWrapper, Pipeline)
+    ):
+        raise TypeError(
+            "Model must be of type 'Pipeline', 'PivenModelWrapper'"
+            + " or 'PivenTransformedTargetRegressor'"
+        )
+    # Model config
+    config = {"type": str(type(model))}
+    # Save config
+    with (ppath / "config.json").open("w") as outfile:
+        json.dump(config, outfile)
+    # Dump model
+    if isinstance(model, PivenTransformedTargetRegressor):
+        _save_piven_transformed_target_regressor(model, ppath, "piven_ttr.joblib")
+    elif isinstance(model, Pipeline):
+        _save_model_pipeline(model, ppath, "piven_pipeline.joblib")
+    elif isinstance(model, PivenModelWrapper):
+        _save_piven_model_wrapper(model, ppath, "piven_model.h5")
+    else:
+        raise ValueError(
+            "Model must be of type 'Pipeline', 'PivenModelWrapper'"
+            + " or 'PivenTransformedTargetRegressor'"
+        )
+    # Return path
+    return path
 
 
 def _load_model_config(path: Path) -> dict:
@@ -103,42 +139,6 @@ def _load_piven_transformed_target_regressor(
             ttr.regressor_.steps[idx] = (step[0], pmw)
             ttr.regressor.steps[idx] = (step[0], pmw_clone)
     return ttr
-
-
-def save_piven_model(
-    model: Union[PivenTransformedTargetRegressor, PivenModelWrapper, Pipeline],
-    path: str,
-) -> Path:
-    """Save a piven model to a folder"""
-    ppath = Path(path)
-    if not ppath.is_dir():
-        raise NotADirectoryError(f"Directory {path} does not exist.")
-    if not isinstance(
-        model, (PivenTransformedTargetRegressor, PivenModelWrapper, Pipeline)
-    ):
-        raise TypeError(
-            "Model must be of type 'Pipeline', 'PivenModelWrapper'"
-            + " or 'PivenTransformedTargetRegressor'"
-        )
-    # Model config
-    config = {"type": str(type(model))}
-    # Save config
-    with (ppath / "config.json").open("w") as outfile:
-        json.dump(config, outfile)
-    # Dump model
-    if isinstance(model, PivenTransformedTargetRegressor):
-        _save_piven_transformed_target_regressor(model, ppath, "piven_ttr.joblib")
-    elif isinstance(model, Pipeline):
-        _save_model_pipeline(model, ppath, "piven_pipeline.joblib")
-    elif isinstance(model, PivenModelWrapper):
-        _save_piven_model_wrapper(model, ppath, "piven_model.h5")
-    else:
-        raise ValueError(
-            "Model must be of type 'Pipeline', 'PivenModelWrapper'"
-            + " or 'PivenTransformedTargetRegressor'"
-        )
-    # Return path
-    return path
 
 
 def load_piven_model(
