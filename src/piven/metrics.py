@@ -8,8 +8,7 @@ def mpiw(y_true, y_pred):
     """Compute the point estimate as the middle of the upper & lower CI"""
     y_u_pred = y_pred[:, 0]
     y_l_pred = y_pred[:, 1]
-    mpiw = tf.reduce_mean(y_u_pred - y_l_pred)
-    return mpiw
+    return tf.reduce_mean(y_u_pred - y_l_pred)
 
 
 def picp(y_true, y_pred):
@@ -19,8 +18,7 @@ def picp(y_true, y_pred):
     y_l_pred = y_pred[:, 1]
     k_u = tf.cast(y_u_pred > y_true, tf.float32)
     k_l = tf.cast(y_l_pred < y_true, tf.float32)
-    picp = tf.reduce_mean(k_l * k_u)
-    return picp
+    return tf.reduce_mean(k_l * k_u)
 
 
 def coverage(
