@@ -30,12 +30,12 @@ class Piven(keras.layers.Layer):
         )
         self.output_layer = tf.keras.layers.Concatenate(name="output")
 
-    def call(self, inputs):
+    def call(self, inputs) -> tf.keras.layers.Concatenate:
         pi = self.pi(inputs)
         v = self.v(inputs)
         return self.output_layer([pi, v])
 
-    def get_config(self):
+    def get_config(self) -> dict:
         return {
             "init_pi_upper": self.init_pi_upper,
             "init_pi_lower": self.init_pi_lower,
