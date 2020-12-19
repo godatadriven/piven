@@ -9,7 +9,7 @@ from tensorflow.python.keras.models import Sequential
 class PivenModelWrapper(KerasRegressor):
     def fit(self, x, y, **kwargs):
         """Fit the piven model"""
-        # Check y shape
+        # Check y shape and stack model vertically. (upper and lower bound).
         if len(y.shape) == 1:
             y = np.stack((y.reshape(-1, 1), y.reshape(-1, 1)), axis=1)
         elif len(y.shape) == 2:
@@ -42,6 +42,8 @@ class PivenModelWrapper(KerasRegressor):
         # Upper / lower bounds
         y_upper_pred = yhat[:, 0]
         y_lower_pred = yhat[:, 1]
+        # Point prediction
+        # This is a weighted sum of the sigmoid * upper/lower bounds
         y_value_pred = yhat[:, 2]
         y_out = y_value_pred * y_upper_pred + (1 - y_value_pred) * y_lower_pred
         if return_prediction_intervals:
