@@ -1,4 +1,4 @@
-from typing import Union, Callable
+from typing import Callable
 import tensorflow as tf
 
 
@@ -6,9 +6,7 @@ def piven_loss(
     lambda_in: float = 15.0, soften: float = 160.0, alpha: float = 0.05
 ) -> Callable:
     # define loss fn
-    def piven_loss(
-        y_true: Union[tf.float64, tf.float32], y_pred: Union[tf.float64, tf.float32]
-    ):
+    def piven_loss(y_true: tf.Tensor, y_pred: tf.Tensor):
         y_u = y_pred[:, 0]
         y_l = y_pred[:, 1]
         y_t = y_true[:, 0]
