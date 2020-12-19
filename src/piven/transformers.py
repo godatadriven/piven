@@ -32,37 +32,15 @@ class PivenTransformedTargetRegressor(_TTR):
         check_is_fitted(self)
         if return_prediction_intervals is None:
             return_prediction_intervals = False
-        if return_prediction_intervals:
-            pred, pi_lower, pi_higher = self.regressor_.predict(
-                x, return_prediction_intervals=return_prediction_intervals
-            )
-        else:
-            pred = self.regressor_.predict(
-                x, return_prediction_intervals=return_prediction_intervals
-            )
-        if pred.ndim == 1:
-            pred_trans = self.transformer_.inverse_transform(pred.reshape(-1, 1))
-            if return_prediction_intervals:
-                pi_lower_trans = self.transformer_.inverse_transform(
-                    pi_lower.reshape(-1, 1)
-                )
-                pi_higher_trans = self.transformer_.inverse_transform(
-                    pi_higher.reshape(-1, 1)
-                )
-        else:
-            pred_trans = self.transformer_.inverse_transform(pred)
-        if (
-            self._training_dim == 1
-            and pred_trans.ndim == 2
-            and pred_trans.shape[1] == 1
-        ):
-            pred_trans = pred_trans.squeeze(axis=1)
-
+        # Predict
+        pred = self.regressor_.predict(
+            x, return_prediction_intervals=return_prediction_intervals
+        )
         if return_prediction_intervals:
             return (
-                pred_trans.flatten(),
-                pi_lower_trans.flatten(),
-                pi_higher_trans.flatten(),
+                self.transformer_.inverse_transform(pred[0].reshape(-1, 1)).flatten(),
+                self.transformer_.inverse_transform(pred[1].reshape(-1, 1)).flatten(),
+                self.transformer_.inverse_transform(pred[2].reshape(-1, 1)).flatten(),
             )
         else:
-            return pred_trans.flatten()
+            return self.transformer_.inverse_transform(pred.reshape(-1, 1)).flatten()
