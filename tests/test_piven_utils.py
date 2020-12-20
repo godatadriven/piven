@@ -31,6 +31,7 @@ class TestModelIO:
                 "config.json",
                 "piven_model.h5",
                 "piven_model_config.json",
+                "piven_model_history.json",
                 "piven_ttr.joblib",
             ]
             piven_model_loaded = load_piven_model(keras_model_function, tmpdir)
@@ -53,6 +54,7 @@ class TestModelIO:
                 "config.json",
                 "piven_model.h5",
                 "piven_model_config.json",
+                "piven_model_history.json",
                 "piven_pipeline.joblib",
             ]
             piven_model_loaded = load_piven_model(keras_model_function, tmpdir)
@@ -75,6 +77,7 @@ class TestModelIO:
                 "config.json",
                 "piven_model.h5",
                 "piven_model_config.json",
+                "piven_model_history.json",
             ]
             piven_model_loaded = load_piven_model(keras_model_function, tmpdir)
         y_pred_loaded = piven_model_loaded.predict(

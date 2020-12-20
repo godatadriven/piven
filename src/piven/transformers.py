@@ -44,3 +44,7 @@ class PivenTransformedTargetRegressor(_TTR):
             )
         else:
             return self.transformer_.inverse_transform(pred.reshape(-1, 1)).flatten()
+
+    def history(self):
+        check_is_fitted(self)
+        return self.regressor_.history

@@ -7,6 +7,10 @@ from tensorflow.python.keras.models import Sequential
 
 
 class PivenModelWrapper(KerasRegressor):
+    def __init__(self, build_fn=None, **sk_params):
+        super().__init__(build_fn, **sk_params)
+        self.history = None
+
     def fit(self, x, y, **kwargs):
         """Fit the piven model"""
         # Check y shape and stack model vertically. (upper and lower bound).
@@ -31,7 +35,9 @@ class PivenModelWrapper(KerasRegressor):
         fit_args = copy.deepcopy(self.filter_sk_params(Sequential.fit))
         fit_args.update(kwargs)
 
-        return self.model.fit(x, y, **fit_args)
+        history = self.model.fit(x, y, **fit_args)
+        self.history = history.history
+        return self.model
 
     def predict(
         self, x, return_prediction_intervals=True, **kwargs
