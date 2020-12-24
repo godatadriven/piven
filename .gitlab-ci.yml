@@ -1,7 +1,7 @@
 stages:
   - static analysis
   - test
-  - package repository
+  - build
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
@@ -38,8 +38,16 @@ unit_tests:
     - pytest
 
 pypi:
-  stage: package repository
+  stage: build
   script:
     - pip install twine
     - python setup.py sdist bdist_wheel
     - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+
+registry:
+  stage: build
+  image: docker:19.03.12
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
+    - docker build -t $CI_COMMIT_REF_SLUG .
+    - docker push registry.gitlab.com/jasperginn/piven.py
