@@ -46,10 +46,11 @@ pypi:
   #only:
   #  refs:
   #    - master
+  when: manual
   script:
     - pip install twine
     - python setup.py sdist bdist_wheel
-    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/* --verbose
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/* --skip-existing --verbose
 
 registry:
   stage: build
@@ -59,7 +60,8 @@ registry:
   #    - master
   services:
     - docker:19.03.12-dind
+  when: manual
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
-    - docker build -t $CI_COMMIT_REF_SLUG .
-    - docker push registry.gitlab.com/jasperginn/piven.py
+    - docker build -t registry.gitlab.com/jasperginn/piven.py-{$CI_COMMIT_REF_SLUG} .
+    - docker push registry.gitlab.com/jasperginn/piven.py-{$CI_COMMIT_REF_SLUG}
