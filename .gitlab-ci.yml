@@ -64,6 +64,6 @@ registry:
     - docker:19.03.12-dind
   when: manual
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
-    - docker build -t registry.gitlab.com/jasperginn/piven.py . #-$CI_COMMIT_REF_SLUG
-    - docker push registry.gitlab.com/jasperginn/piven.py #-$CI_COMMIT_REF_SLUG
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com/$CI_PROJECT_PATH
+    - docker build -t $CI_REGISTRY/$CI_PROJECT_PATH/piven-$CI_COMMIT_REF_SLUG . #-$CI_COMMIT_REF_SLUG
+    - docker push $CI_REGISTRY/$CI_PROJECT_PATH/piven-$CI_COMMIT_REF_SLUG #-$CI_COMMIT_REF_SLUG
