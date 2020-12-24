@@ -1,6 +1,7 @@
 stages:
   - static analysis
   - test
+  - package repository
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
@@ -35,3 +36,10 @@ unit_tests:
     - pip install pytest>=2.0.0
     - pip install .
     - pytest
+
+pypi:
+  stage: package repository
+  script:
+    - pip install twine
+    - python setup.py sdist bdist_wheel
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/*
