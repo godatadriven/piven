@@ -1,6 +1,7 @@
 stages:
   - static analysis
   - test
+  - build
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
@@ -12,14 +13,13 @@ cache:
     - .cache/pip
     - venv/
 
-before_script:
-  - python -V
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
-
 static:
   stage: static analysis
+  before_script:
+    - python -V
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
   script:
     - pip install black==20.8b1 flake8==3.8.4
     - black src/piven/*.py
@@ -27,6 +27,11 @@ static:
 
 unit_tests:
   stage: test
+  before_script:
+    - python -V
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
   script:
     - pwd
     - ls -l
@@ -35,3 +40,28 @@ unit_tests:
     - pip install pytest>=2.0.0
     - pip install .
     - pytest
+
+pypi:
+  stage: build
+  only:
+    refs:
+      - master
+  when: manual
+  script:
+    - pip install twine
+    - python setup.py sdist bdist_wheel
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/* --skip-existing --verbose
+
+registry:
+  stage: build
+  image: docker:19.03.12
+  only:
+    refs:
+      - master
+  services:
+    - docker:19.03.12-dind
+  when: manual
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com/$CI_PROJECT_PATH
+    - docker build -t $CI_REGISTRY/$CI_PROJECT_PATH/piven-$CI_COMMIT_REF_SLUG .
+    - docker push $CI_REGISTRY/$CI_PROJECT_PATH/piven-$CI_COMMIT_REF_SLUG

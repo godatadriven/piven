@@ -28,6 +28,8 @@ def _save_piven_model_wrapper(
     tf.keras.models.save_model(model.model, path / file_name)
     with (path / "piven_model_config.json").open("w") as outfile:
         json.dump(model.sk_params, outfile)
+    with (path / "piven_model_history.json").open("w") as outfile:
+        json.dump(model.history, outfile)
     return str(path / "piven_model_config.json")
 
 
@@ -66,7 +68,10 @@ def _load_piven_model_wrapper(
 ) -> PivenModelWrapper:
     """Load a keras model from disk and return a Piven wrapper"""
     model = tf.keras.models.load_model(path / "piven_model.h5")
+    with (path / "piven_model_history.json").open("r") as infile:
+        history = json.load(infile)
     pmw = PivenModelWrapper(build_fn, **model_config)
+    pmw.history = history
     pmw.model = model
     return pmw
 
