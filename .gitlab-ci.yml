@@ -43,20 +43,20 @@ unit_tests:
 
 pypi:
   stage: build
-  only:
-    refs:
-      - master
+  #only:
+  #  refs:
+  #    - master
   script:
     - pip install twine
     - python setup.py sdist bdist_wheel
-    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/* --verbose
 
 registry:
   stage: build
   image: docker:19.03.12
-  only:
-    refs:
-      - master
+  #only:
+  #  refs:
+  #    - master
   services:
     - docker.dind
   script:
