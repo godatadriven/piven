@@ -57,8 +57,8 @@ registry:
   #only:
   #  refs:
   #    - master
-  services:
-    - docker.dind
+  #services:
+  #  - docker.dind
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
     - docker build -t $CI_COMMIT_REF_SLUG .
