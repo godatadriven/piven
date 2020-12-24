@@ -20,7 +20,6 @@ static:
     - pip install virtualenv
     - virtualenv venv
     - source venv/bin/activate
-  when: manual
   script:
     - pip install black==20.8b1 flake8==3.8.4
     - black src/piven/*.py
@@ -33,7 +32,6 @@ unit_tests:
     - pip install virtualenv
     - virtualenv venv
     - source venv/bin/activate
-  when: manual
   script:
     - pwd
     - ls -l
@@ -45,9 +43,9 @@ unit_tests:
 
 pypi:
   stage: build
-  #only:
-  #  refs:
-  #    - master
+  only:
+    refs:
+      - master
   when: manual
   script:
     - pip install twine
@@ -57,13 +55,13 @@ pypi:
 registry:
   stage: build
   image: docker:19.03.12
-  #only:
-  #  refs:
-  #    - master
+  only:
+    refs:
+      - master
   services:
     - docker:19.03.12-dind
   when: manual
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com/$CI_PROJECT_PATH
-    - docker build -t $CI_REGISTRY/$CI_PROJECT_PATH/piven-$CI_COMMIT_REF_SLUG . #-$CI_COMMIT_REF_SLUG
-    - docker push $CI_REGISTRY/$CI_PROJECT_PATH/piven-$CI_COMMIT_REF_SLUG #-$CI_COMMIT_REF_SLUG
+    - docker build -t $CI_REGISTRY/$CI_PROJECT_PATH/piven-$CI_COMMIT_REF_SLUG .
+    - docker push $CI_REGISTRY/$CI_PROJECT_PATH/piven-$CI_COMMIT_REF_SLUG
