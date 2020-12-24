@@ -20,6 +20,7 @@ static:
     - pip install virtualenv
     - virtualenv venv
     - source venv/bin/activate
+  when: manual
   script:
     - pip install black==20.8b1 flake8==3.8.4
     - black src/piven/*.py
@@ -32,6 +33,7 @@ unit_tests:
     - pip install virtualenv
     - virtualenv venv
     - source venv/bin/activate
+  when: manual
   script:
     - pwd
     - ls -l
