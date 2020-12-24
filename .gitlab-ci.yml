@@ -13,14 +13,13 @@ cache:
     - .cache/pip
     - venv/
 
-before_script:
-  - python -V
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
-
 static:
   stage: static analysis
+  before_script:
+    - python -V
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
   script:
     - pip install black==20.8b1 flake8==3.8.4
     - black src/piven/*.py
@@ -28,6 +27,11 @@ static:
 
 unit_tests:
   stage: test
+  before_script:
+    - python -V
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
   script:
     - pwd
     - ls -l
