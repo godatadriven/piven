@@ -39,6 +39,9 @@ unit_tests:
 
 pypi:
   stage: build
+  only:
+    refs:
+      - master
   script:
     - pip install twine
     - python setup.py sdist bdist_wheel
@@ -47,6 +50,11 @@ pypi:
 registry:
   stage: build
   image: docker:19.03.12
+  only:
+    refs:
+      - master
+  services:
+    - docker.dind
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
     - docker build -t $CI_COMMIT_REF_SLUG .
