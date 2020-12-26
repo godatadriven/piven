@@ -2,7 +2,7 @@ from typing import Union, Callable
 import pytest
 import numpy as np
 from piven.wrappers import PivenModelWrapper
-from piven.transformers import PivenTransformedTargetRegressor
+from piven.compose import PivenTransformedTargetRegressor
 from piven.metrics.tensorflow import mpiw, picp
 from piven.loss import piven_loss
 from piven.regressors import build_keras_piven

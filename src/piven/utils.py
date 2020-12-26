@@ -7,7 +7,7 @@ from piven.loss import piven_loss
 from piven.metrics.tensorflow import mpiw, picp
 from piven.layers import Piven
 from piven.wrappers import PivenModelWrapper
-from piven.transformers import PivenTransformedTargetRegressor
+from piven.compose import PivenTransformedTargetRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.base import clone
