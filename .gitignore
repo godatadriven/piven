@@ -10,6 +10,7 @@ __pycache__
 
 # Pytest
 .pytest_cache
+.coverage
 
 # Todos
 TODO.txt

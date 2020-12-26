@@ -33,8 +33,7 @@ def piven_loss(
         )
         piven_loss_ = mpiw_capt + qd_rhs_soft  # final qd loss form
         y_eli = y_v * y_u + (1 - y_v) * y_l
-        y_eli = tf.reshape(y_eli, (-1, 1))
-        piven_loss_ += tf.losses.mean_squared_error(y_true, y_eli)
+        piven_loss_ += tf.losses.mean_squared_error(y_t, y_eli)
         return piven_loss_
 
     return piven_loss

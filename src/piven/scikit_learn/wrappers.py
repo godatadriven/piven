@@ -42,7 +42,13 @@ class PivenModelWrapper(KerasRegressor):
     def predict(
         self, x, return_prediction_intervals=True, **kwargs
     ) -> Union[np.array, Tuple[np.array, np.array, np.array]]:
-        """Predict method for a model with piven output layer"""
+        """
+        Predict method for a model with piven output layer
+        :param x: input data
+        :param return_prediction_intervals: If true, then this function will return
+                the lower and upper PI for each point estimate.
+        :return: 1 or 3 numpy arrays, depending on the input arguments.
+        """
         kwargs = self.filter_sk_params(Sequential.predict, kwargs)
         yhat = self.model.predict(x, **kwargs)
         # Upper / lower bounds
