@@ -1,7 +1,7 @@
 from typing import Union, Callable
 import pytest
 import numpy as np
-from piven.scikit_learn.wrappers import PivenModelWrapper
+from piven.scikit_learn.wrappers import PivenRegressor
 from piven.scikit_learn.compose import PivenTransformedTargetRegressor
 from piven.metrics.tensorflow import mpiw, picp
 from piven.loss import piven_loss
@@ -49,14 +49,14 @@ def keras_model_function() -> Callable:
 
 
 @pytest.fixture(scope="function")
-def piven_model_wrapper(keras_model_function: Callable) -> PivenModelWrapper:
-    return PivenModelWrapper(
+def piven_model_wrapper(keras_model_function: Callable) -> PivenRegressor:
+    return PivenRegressor(
         build_fn=keras_model_function, input_size=1, hidden_units=(128, 128)
     )
 
 
 @pytest.fixture(scope="function")
-def piven_model_pipeline(piven_model_wrapper: PivenModelWrapper) -> Pipeline:
+def piven_model_pipeline(piven_model_wrapper: PivenRegressor) -> Pipeline:
     return Pipeline([("scaler", StandardScaler()), ("model", piven_model_wrapper)])
 
 

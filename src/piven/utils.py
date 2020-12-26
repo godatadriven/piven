@@ -6,7 +6,7 @@ import tensorflow as tf
 from piven.loss import piven_loss
 from piven.metrics.tensorflow import mpiw, picp
 from piven.layers import Piven
-from piven.scikit_learn.wrappers import PivenModelWrapper
+from piven.scikit_learn.wrappers import PivenRegressor
 from piven.scikit_learn.compose import PivenTransformedTargetRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -20,7 +20,7 @@ tf.keras.utils.get_custom_objects().update(
 
 
 def _save_piven_model_wrapper(
-    model: PivenModelWrapper, path: Path, file_name: str = None
+    model: PivenRegressor, path: Path, file_name: str = None
 ) -> str:
     """Save a keras model that is wrapped in a PivenModelWrapper class"""
     if file_name is None:
@@ -36,7 +36,7 @@ def _save_piven_model_wrapper(
 def _unset_sklearn_pipeline(obj: Pipeline, path: Path) -> Pipeline:
     """Unset a piven model from an sklearn pipeline and return the result"""
     for idx, step in enumerate(obj.steps):
-        if isinstance(step[-1], PivenModelWrapper):
+        if isinstance(step[-1], PivenRegressor):
             _ = _save_piven_model_wrapper(step[-1], path=path)
             obj.steps[idx] = (step[0], None)
     return obj
@@ -64,15 +64,14 @@ def _save_piven_transformed_target_regressor(
 
 
 def save_piven_model(
-    model: Union[PivenTransformedTargetRegressor, PivenModelWrapper, Pipeline],
-    path: str,
+    model: Union[PivenTransformedTargetRegressor, PivenRegressor, Pipeline], path: str
 ) -> str:
     """Save a piven model to a folder"""
     ppath = Path(path)
     if not ppath.is_dir():
         raise NotADirectoryError(f"Directory {path} does not exist.")
     if not isinstance(
-        model, (PivenTransformedTargetRegressor, PivenModelWrapper, Pipeline)
+        model, (PivenTransformedTargetRegressor, PivenRegressor, Pipeline)
     ):
         raise TypeError(
             "Model must be of type 'Pipeline', 'PivenModelWrapper'"
@@ -88,7 +87,7 @@ def save_piven_model(
         _save_piven_transformed_target_regressor(model, ppath, "piven_ttr.joblib")
     elif isinstance(model, Pipeline):
         _save_model_pipeline(model, ppath, "piven_pipeline.joblib")
-    elif isinstance(model, PivenModelWrapper):
+    elif isinstance(model, PivenRegressor):
         _save_piven_model_wrapper(model, ppath, "piven_model.h5")
     else:
         raise ValueError(
@@ -107,12 +106,12 @@ def _load_model_config(path: Path) -> dict:
 
 def _load_piven_model_wrapper(
     path: Path, build_fn: Callable, model_config: dict
-) -> PivenModelWrapper:
+) -> PivenRegressor:
     """Load a keras model from disk and return a Piven wrapper"""
     model = tf.keras.models.load_model(path / "piven_model.h5")
     with (path / "piven_model_history.json").open("r") as infile:
         history = json.load(infile)
-    pmw = PivenModelWrapper(build_fn, **model_config)
+    pmw = PivenRegressor(build_fn, **model_config)
     pmw.history = history
     pmw.model = model
     return pmw
@@ -138,7 +137,7 @@ def _load_piven_transformed_target_regressor(
     ttr.regressor = clone(ttr.regressor_)
     model_config = _load_model_config(path)
     pmw = _load_piven_model_wrapper(path, build_fn=build_fn, model_config=model_config)
-    pmw_clone = PivenModelWrapper(build_fn, **model_config)
+    pmw_clone = PivenRegressor(build_fn, **model_config)
     for idx, step in enumerate(ttr.regressor_.steps):
         if step[-1] is None:
             ttr.regressor_.steps[idx] = (step[0], pmw)
@@ -148,7 +147,7 @@ def _load_piven_transformed_target_regressor(
 
 def load_piven_model(
     build_fn: Callable, path: str
-) -> Union[PivenTransformedTargetRegressor, PivenModelWrapper, Pipeline]:
+) -> Union[PivenTransformedTargetRegressor, PivenRegressor, Pipeline]:
     """Load a piven model from disk"""
     ppath = Path(path)
     if not ppath.is_dir():
