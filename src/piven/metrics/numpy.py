@@ -10,6 +10,6 @@ def coverage(
     return np.mean(covered_lower * covered_higher)
 
 
-def pi_distance(pi_lower: np.ndarray, pi_higher: np.ndarray) -> np.ndarray:
+def pi_width(pi_lower: np.ndarray, pi_higher: np.ndarray) -> np.ndarray:
     """Compute the average distance between the upper and lower bounds"""
     return np.mean(pi_higher - pi_lower)
