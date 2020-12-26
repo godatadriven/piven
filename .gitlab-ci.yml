@@ -39,10 +39,7 @@ unit_tests:
     - python -c "import sys;print(sys.path)"
     - pip install pytest>=2.0.0 coverage pytest-cov
     - pip install .
-    - pytest --cov
-    - coverage xml
-    - curl https://deepsource.io/cli | sh
-    - ./bin/deepsource report --analyzer test-coverage --key python --value file ./coverage.xml
+    - pytest --cov=piven
 
 pypi:
   stage: build
