@@ -6,7 +6,7 @@ from tensorflow.keras.wrappers.scikit_learn import KerasRegressor
 from tensorflow.python.keras.models import Sequential
 
 
-class PivenRegressor(KerasRegressor):
+class PivenKerasRegressor(KerasRegressor):
     def __init__(self, build_fn=None, **sk_params):
         super().__init__(build_fn, **sk_params)
         self.history = None
