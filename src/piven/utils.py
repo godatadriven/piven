@@ -63,19 +63,6 @@ def _save_piven_transformed_target_regressor(
     return str(path / file_name)
 
 
-def _load_piven_model_wrapper(
-    path: Path, build_fn: Callable, model_config: dict
-) -> PivenModelWrapper:
-    """Load a keras model from disk and return a Piven wrapper"""
-    model = tf.keras.models.load_model(path / "piven_model.h5")
-    with (path / "piven_model_history.json").open("r") as infile:
-        history = json.load(infile)
-    pmw = PivenModelWrapper(build_fn, **model_config)
-    pmw.history = history
-    pmw.model = model
-    return pmw
-
-
 def save_piven_model(
     model: Union[PivenTransformedTargetRegressor, PivenModelWrapper, Pipeline],
     path: str,
@@ -116,6 +103,19 @@ def _load_model_config(path: Path) -> dict:
     """Load PivenModelWrapper model config"""
     with (path / "piven_model_config.json").open("r") as infile:
         return json.load(infile)
+
+
+def _load_piven_model_wrapper(
+    path: Path, build_fn: Callable, model_config: dict
+) -> PivenModelWrapper:
+    """Load a keras model from disk and return a Piven wrapper"""
+    model = tf.keras.models.load_model(path / "piven_model.h5")
+    with (path / "piven_model_history.json").open("r") as infile:
+        history = json.load(infile)
+    pmw = PivenModelWrapper(build_fn, **model_config)
+    pmw.history = history
+    pmw.model = model
+    return pmw
 
 
 def _load_sklearn_pipeline(path: Path, build_fn: Callable) -> Pipeline:
