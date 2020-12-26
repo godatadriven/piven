@@ -40,15 +40,11 @@ class PivenModelWrapper(KerasRegressor):
         return self.model
 
     def predict(
-        self, x, return_prediction_intervals=True, return_pi_weight=False, **kwargs
+        self, x, return_prediction_intervals=True, **kwargs
     ) -> Union[np.array, Tuple[np.array, np.array, np.array]]:
         """
         Predict method for a model with piven output layer
         :param x: input data
-        :param return_pi_weight: if true, then the function will return the output
-                of the sigmoid layer by which the upper and lower PI are weighted
-                to obtain the point estimate. If false, it will compute the point
-                estimate and return this.
         :param return_prediction_intervals: If true, then this function will return
                 the lower and upper PI for each point estimate.
         :return: 1 or 3 numpy arrays, depending on the input arguments.
@@ -61,11 +57,7 @@ class PivenModelWrapper(KerasRegressor):
         # Point prediction
         # This is a weighted sum of the sigmoid * upper/lower bounds
         y_value_pred = yhat[:, 2]
-        # If want the sigmoid weights
-        if return_pi_weight:
-            y_out = y_value_pred.copy()
-        else:
-            y_out = y_value_pred * y_upper_pred + (1 - y_value_pred) * y_lower_pred
+        y_out = y_value_pred * y_upper_pred + (1 - y_value_pred) * y_lower_pred
         if return_prediction_intervals:
             return y_out.flatten(), y_lower_pred.flatten(), y_upper_pred.flatten()
         else:
