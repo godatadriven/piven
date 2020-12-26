@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn.metrics import mean_squared_error
+from scipy.special import expit
 
 
 def coverage(
@@ -50,5 +51,5 @@ def piven_loss(
     return float(piven_loss_)
 
 
-def _sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+def _sigmoid(x: np.ndarray) -> np.ndarray:
+    return expit(x)
