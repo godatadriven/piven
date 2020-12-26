@@ -4,7 +4,7 @@ import joblib
 from typing import Union, Callable
 import tensorflow as tf
 from piven.loss import piven_loss
-from piven.metrics import picp, mpiw
+from piven.metrics.tensorflow import mpiw, picp
 from piven.layers import Piven
 from piven.wrappers import PivenModelWrapper
 from piven.transformers import PivenTransformedTargetRegressor

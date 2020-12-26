@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 from piven.wrappers import PivenModelWrapper
 from piven.transformers import PivenTransformedTargetRegressor
-from piven.metrics import picp, mpiw
+from piven.metrics.tensorflow import mpiw, picp
 from piven.loss import piven_loss
 from piven.regressors import build_keras_piven
 from sklearn.pipeline import Pipeline
