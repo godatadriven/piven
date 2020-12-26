@@ -159,7 +159,7 @@ def load_piven_model(
         m = _load_piven_transformed_target_regressor(ppath, build_fn=build_fn)
     elif mtype.endswith("Pipeline"):
         m = _load_sklearn_pipeline(ppath, build_fn=build_fn)
-    elif mtype.endswith("PivenModelWrapper"):
+    elif mtype.endswith("PivenRegressor"):
         m = _load_piven_model_wrapper(
             ppath, build_fn=build_fn, model_config=_load_model_config(ppath)
         )
