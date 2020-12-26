@@ -22,7 +22,7 @@ tf.keras.utils.get_custom_objects().update(
 def _save_piven_model_wrapper(
     model: PivenKerasRegressor, path: Path, file_name: str = None
 ) -> str:
-    """Save a keras model that is wrapped in a PivenModelWrapper class"""
+    """Save a keras model that is wrapped in a PivenKerasRegressor class"""
     if file_name is None:
         file_name = "piven_model.h5"
     tf.keras.models.save_model(model.model, path / file_name)
@@ -75,7 +75,7 @@ def save_piven_model(
         model, (PivenTransformedTargetRegressor, PivenKerasRegressor, Pipeline)
     ):
         raise TypeError(
-            "Model must be of type 'Pipeline', 'PivenModelWrapper'"
+            "Model must be of type 'Pipeline', 'PivenKerasRegressor'"
             + " or 'PivenTransformedTargetRegressor'"
         )
     # Model config
@@ -92,7 +92,7 @@ def save_piven_model(
         _save_piven_model_wrapper(model, ppath, "piven_model.h5")
     else:
         raise ValueError(
-            "Model must be of type 'Pipeline', 'PivenModelWrapper'"
+            "Model must be of type 'Pipeline', 'PivenKerasRegressor'"
             + " or 'PivenTransformedTargetRegressor'"
         )
     # Return path
@@ -100,7 +100,7 @@ def save_piven_model(
 
 
 def _load_model_config(path: Path) -> dict:
-    """Load PivenModelWrapper model config"""
+    """Load PivenKerasRegressor model config"""
     with (path / "piven_model_config.json").open("r") as infile:
         return json.load(infile)
 
