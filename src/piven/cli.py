@@ -1,4 +1,3 @@
-from typing import Tuple
 from pathlib import Path
 import logging
 import typer
@@ -16,8 +15,8 @@ def run_piven(
     input_file: str,
     target: str,
     output_dir: str,
-    dense_units: Tuple[int],
-    dropout_rate: Tuple[float],
+    dense_units: str,
+    dropout_rate: str,
     pi_init_low: float = typer.Option(
         -3.0, help="initial value of the pi lower bound."
     ),
@@ -42,6 +41,8 @@ def run_piven(
     """
     Run a piven model from the command line
     """
+    dense_units = tuple([int(du) for du in dense_units.split("-")])
+    dropout_rate = tuple([float(dr) for dr in dropout_rate.split("-")])
     # Check output dir now
     poutput_dir = Path(output_dir)
     if not poutput_dir.is_dir():
