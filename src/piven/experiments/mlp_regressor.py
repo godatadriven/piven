@@ -13,14 +13,15 @@ from piven.metrics.numpy import coverage, pi_width, piven_loss as piven_loss_num
 
 
 def check_model_params(
-    hidden_units: Tuple[int, ...],
+    input_dim: int,
+    dense_units: Tuple[int, ...],
     dropout_rate: Tuple[float, ...],
-    pi_init_low: float,
-    pi_init_high: float,
+    bias_init_low: float,
+    bias_init_high: float,
     lambda_: float,
     lr: float,
 ) -> None:
-    should_be_float = [*dropout_rate] + [pi_init_low, pi_init_high, lambda_, lr]
+    should_be_float = [*dropout_rate] + [bias_init_low, bias_init_high, lambda_, lr]
     should_be_float_argnames = [
         f"dropout_value_{idx + 1}" for idx in range(len(dropout_rate))
     ] + ["pi_init_low", "pi_init_high", "lambda_", "learning_rate"]
@@ -31,32 +32,36 @@ def check_model_params(
         else:
             if not isinstance(argval, float):
                 raise ValueError(f"Argument {argname} should be a float.")
-    for argval in hidden_units:
+    for argval in dense_units:
         if not isinstance(argval, int) or argval < 1:
-            raise ValueError("All hidden units should be integers > 0.")
-    if not len(hidden_units) == len(dropout_rate):
+            raise ValueError("All dense units should be integers > 0.")
+    if not len(dense_units) == len(dropout_rate):
         raise ValueError(
-            "Number of hidden units"
-            + f" in each layer {len(hidden_units)} and dropout rate"
+            "Number of dense units"
+            + f" in each layer {len(dense_units)} and dropout rate"
             + f" in each layer {len(dropout_rate)} must be equal."
         )
-    if pi_init_low > pi_init_high:
+    if input_dim < 1:
+        raise ValueError("Input dimension cannot be < 1.")
+    if bias_init_low > bias_init_high:
         raise ValueError(
-            f"Value of lower pi {pi_init_low} is larger than the"
-            + f" value of the upper pi {pi_init_high}."
+            f"Value of lower pi {bias_init_low} is larger than the"
+            + f" value of the upper pi {bias_init_high}."
         )
     return None
 
 
 # Make build function for the model wrapper
-def piven_model(input_dim, dense_units, dropout_rate, lambda_=10.0, lr=0.0001):
+def piven_model(
+    input_dim, dense_units, dropout_rate, lambda_, bias_init_low, bias_init_high, lr
+):
     model = build_keras_piven(
         input_dim=input_dim,
         dense_units=dense_units,
         dropout_rate=dropout_rate,
         activation="relu",
-        bias_init_low=-3,
-        bias_init_high=3,
+        bias_init_low=bias_init_low,
+        bias_init_high=bias_init_high,
     )
     model.compile(
         optimizer=tf.keras.optimizers.Adam(lr=lr),
@@ -70,13 +75,21 @@ class PivenMlpExperiment(PivenExperiment):
     def build_model(self):
         # All build params are passed to init and should be checked here
         check_model_params(**self.params)
-        model = PivenKerasRegressor(build_fn=build_keras_piven, **self.params)
+        model = PivenKerasRegressor(build_fn=piven_model, **self.params)
         pipeline = Pipeline([("preprocess", StandardScaler()), ("model", model)])
         # Finally, normalize the output target
         self.model = PivenTransformedTargetRegressor(
             regressor=pipeline, transformer=StandardScaler()
         )
-        return self.model
+        return self
+
+    @classmethod
+    def load(cls, path: str):
+        experiment_config = PivenMlpExperiment.load_experiment_config(path)
+        model = PivenMlpExperiment.load_model_from_disk(piven_model, path)
+        run = cls(**experiment_config)
+        run.model = model
+        return run
 
     def score(
         self,
