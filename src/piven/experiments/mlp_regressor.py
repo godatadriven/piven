@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
+from sklearn.metrics import mean_absolute_error as mae, mean_squared_error as mse
 from piven.experiments.base import PivenExperiment
 from piven.regressors import build_keras_piven
 from piven.scikit_learn.compose import PivenTransformedTargetRegressor
@@ -109,6 +110,8 @@ class PivenMlpExperiment(PivenExperiment):
                 160.0,
                 0.05,
             ),
+            "mae": mae(y_true, y_pred),
+            "rmse": np.sqrt(mse(y_true, y_pred)),
             "coverage": coverage(y_true, y_pi_low, y_pi_high),
             "pi_width": pi_width(y_pi_low, y_pi_high),
         }

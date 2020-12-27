@@ -50,7 +50,13 @@ class TestPivenMlpExperiment:
             x_valid, return_prediction_intervals=True
         )
         scores = experiment.score(y_valid, y_pred, y_pi_low, y_pi_high)
-        assert sorted(list(scores.keys())) == ["coverage", "loss", "pi_width"]
+        assert sorted(list(scores.keys())) == [
+            "coverage",
+            "loss",
+            "mae",
+            "pi_width",
+            "rmse",
+        ]
 
     def test_experiment_logging(self, mock_data, experiment):
         x_train, x_valid, y_train, y_valid = mock_data
