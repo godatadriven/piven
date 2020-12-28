@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="piven",
-    version="0.3.1",
+    version="0.3.2",
     description="Prediction Intervals with specific value prediction",
     url="https://gitlab.com/jasperginn/piven.py",
     author="Jasper Ginn",
