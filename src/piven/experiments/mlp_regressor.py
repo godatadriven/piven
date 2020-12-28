@@ -2,6 +2,7 @@ from typing import Tuple, Union
 import tensorflow as tf
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
+from sklearn.base import TransformerMixin
 from piven.experiments.base import PivenBaseExperiment
 from piven.regressors import build_keras_piven
 from piven.scikit_learn.compose import PivenTransformedTargetRegressor
@@ -70,14 +71,14 @@ def piven_model(
 
 
 class PivenMlpExperiment(PivenBaseExperiment):
-    def build_model(self, preprocess_pipeline: Union[None, Pipeline] = None):
+    def build_model(self, preprocess: Union[None, Pipeline, TransformerMixin] = None):
         # All build params are passed to init and should be checked here
         check_model_params(**self.params)
         model = PivenKerasRegressor(build_fn=piven_model, **self.params)
-        if preprocess_pipeline is None:
+        if preprocess is None:
             pipeline = Pipeline([("model", model)])
         else:
-            pipeline = Pipeline([("preprocess", preprocess_pipeline), ("model", model)])
+            pipeline = Pipeline([("preprocess", preprocess), ("model", model)])
         # Finally, normalize the output target
         self.model = PivenTransformedTargetRegressor(
             regressor=pipeline, transformer=StandardScaler()

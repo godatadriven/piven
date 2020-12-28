@@ -83,7 +83,7 @@ class TestPivenMlpExperiment:
             bias_init_high=3.0,
             lr=0.0001,
         )
-        experiment.build_model(preprocess_pipeline=sklearn_preprocessing_pipeline)
+        experiment.build_model(preprocess=sklearn_preprocessing_pipeline)
         experiment.fit(
             x,
             y,
