@@ -1,16 +1,13 @@
-from typing import Tuple
+from typing import Tuple, Union
 import tensorflow as tf
-import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import mean_absolute_error as mae, mean_squared_error as mse
-from piven.experiments.base import PivenExperiment
+from piven.experiments.base import PivenBaseExperiment
 from piven.regressors import build_keras_piven
 from piven.scikit_learn.compose import PivenTransformedTargetRegressor
 from piven.scikit_learn.wrappers import PivenKerasRegressor
 from piven.metrics.tensorflow import picp, mpiw
 from piven.loss import piven_loss
-from piven.metrics.numpy import coverage, pi_width, piven_loss as piven_loss_numpy
 
 
 def check_model_params(
@@ -72,12 +69,15 @@ def piven_model(
     return model
 
 
-class PivenMlpExperiment(PivenExperiment):
-    def build_model(self):
+class PivenMlpExperiment(PivenBaseExperiment):
+    def build_model(self, preprocess_pipeline: Union[None, Pipeline] = None):
         # All build params are passed to init and should be checked here
         check_model_params(**self.params)
         model = PivenKerasRegressor(build_fn=piven_model, **self.params)
-        pipeline = Pipeline([("preprocess", StandardScaler()), ("model", model)])
+        if preprocess_pipeline is None:
+            pipeline = Pipeline([("model", model)])
+        else:
+            pipeline = Pipeline([("preprocess", preprocess_pipeline), ("model", model)])
         # Finally, normalize the output target
         self.model = PivenTransformedTargetRegressor(
             regressor=pipeline, transformer=StandardScaler()
@@ -91,27 +91,3 @@ class PivenMlpExperiment(PivenExperiment):
         run = cls(**experiment_config)
         run.model = model
         return run
-
-    def score(
-        self,
-        y_true: np.ndarray,
-        y_pred: np.ndarray,
-        y_pi_low: np.ndarray,
-        y_pi_high: np.ndarray,
-    ):
-        # Compute coverage, pi width and loss
-        return {
-            "loss": piven_loss_numpy(
-                y_true,
-                y_pred,
-                y_pi_low,
-                y_pi_high,
-                self.params.get("lambda_"),
-                160.0,
-                0.05,
-            ),
-            "mae": mae(y_true, y_pred),
-            "rmse": np.sqrt(mse(y_true, y_pred)),
-            "coverage": coverage(y_true, y_pi_low, y_pi_high),
-            "pi_width": pi_width(y_pi_low, y_pi_high),
-        }
