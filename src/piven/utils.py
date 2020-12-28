@@ -29,7 +29,9 @@ def _save_piven_model_wrapper(
     with (path / "piven_model_config.json").open("w") as outfile:
         json.dump(model.sk_params, outfile)
     with (path / "piven_model_history.json").open("w") as outfile:
-        json.dump(model.history, outfile)
+        # From np array --> list
+        history = {k: list(v) for k, v in model.history.items()}
+        json.dump(history, outfile)
     return str(path / "piven_model_config.json")
 
 

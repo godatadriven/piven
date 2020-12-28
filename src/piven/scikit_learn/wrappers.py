@@ -34,7 +34,6 @@ class PivenKerasRegressor(KerasRegressor):
 
         fit_args = copy.deepcopy(self.filter_sk_params(Sequential.fit))
         fit_args.update(kwargs)
-
         history = self.model.fit(x, y, **fit_args)
         self.history = history.history
         return self.model
