@@ -4,6 +4,15 @@ from tensorflow import keras
 
 class Piven(keras.layers.Layer):
     def __init__(self, init_pi_lower=-3.0, init_pi_upper=3.0):
+        """
+        Piven keras layer
+
+        Adapted from:
+
+            Simhayev, Eli, Gilad Katz, and Lior Rokach. "PIVEN: A Deep
+            Neural Network for Prediction Intervals with Specific Value
+            Prediction." arXiv preprint arXiv:2006.05139 (2020).
+        """
         if init_pi_lower >= init_pi_upper:
             raise ValueError(
                 "Lower PI initial value cannot be larger"

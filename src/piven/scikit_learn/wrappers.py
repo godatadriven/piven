@@ -47,6 +47,12 @@ class PivenKerasRegressor(KerasRegressor):
         :param return_prediction_intervals: If true, then this function will return
                 the lower and upper PI for each point estimate.
         :return: 1 or 3 numpy arrays, depending on the input arguments.
+
+        Adapted from:
+
+            Simhayev, Eli, Gilad Katz, and Lior Rokach. "PIVEN: A Deep
+            Neural Network for Prediction Intervals with Specific Value
+            Prediction." arXiv preprint arXiv:2006.05139 (2020).
         """
         kwargs = self.filter_sk_params(Sequential.predict, kwargs)
         yhat = self.model.predict(x, **kwargs)
