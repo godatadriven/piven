@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import joblib
-from typing import Union, Callable
+from typing import Union, Callable, Tuple
 import tensorflow as tf
 from piven.loss import piven_loss
 from piven.metrics.tensorflow import mpiw, picp
@@ -65,10 +65,46 @@ def _save_piven_transformed_target_regressor(
     return str(path / file_name)
 
 
+def _get_piven_model(
+    regressor: Union[Pipeline, PivenTransformedTargetRegressor]
+) -> PivenKerasRegressor:
+    """Extract piven regressor from pipeline or PivenTransformedTargetRegressor"""
+    model_copy = None
+    if isinstance(regressor, Pipeline):
+        for step in regressor.steps:
+            if isinstance(step[-1], PivenKerasRegressor):
+                model_copy = step
+    if isinstance(regressor, PivenTransformedTargetRegressor):
+        for step in regressor.regressor_.steps:
+            if isinstance(step[-1], PivenKerasRegressor):
+                model_copy = step
+    if model_copy is None:
+        raise ValueError(
+            f"Could not retrieve piven model from model with type {type(regressor)}."
+        )
+    return model_copy
+
+
+def _set_piven_model(
+    regressor: Union[Pipeline, PivenTransformedTargetRegressor],
+    piven_model: Tuple[str, PivenKerasRegressor],
+) -> Union[Pipeline, PivenTransformedTargetRegressor]:
+    """Set piven regressor from pipeline or PivenTransformedTargetRegressor"""
+    if isinstance(regressor, Pipeline):
+        for idx, step in enumerate(regressor.steps):
+            if step[-1] is None:
+                regressor.steps[idx] = piven_model
+    if isinstance(regressor, PivenTransformedTargetRegressor):
+        for idx, step in enumerate(regressor.regressor_.steps):
+            if step[-1] is None:
+                regressor.regressor_.steps[idx] = piven_model
+    return regressor
+
+
 def save_piven_model(
     model: Union[PivenTransformedTargetRegressor, PivenKerasRegressor, Pipeline],
     path: str,
-) -> str:
+) -> Union[PivenTransformedTargetRegressor, PivenKerasRegressor, Pipeline]:
     """Save a piven model to a folder"""
     ppath = Path(path)
     if not ppath.is_dir():
@@ -87,9 +123,19 @@ def save_piven_model(
         json.dump(config, outfile)
     # Dump model
     if isinstance(model, PivenTransformedTargetRegressor):
+        # Get piven model
+        model_copy = _get_piven_model(model)
         _save_piven_transformed_target_regressor(model, ppath, "piven_ttr.joblib")
+        # Insert model back into pipeline
+        _set_piven_model(model, model_copy)
+        # Clone regressor (just for printing purposes)
+        model.regressor = clone(model.regressor_)
     elif isinstance(model, Pipeline):
+        # Get piven model
+        model_copy = _get_piven_model(model)
         _save_model_pipeline(model, ppath, "piven_pipeline.joblib")
+        # Insert model
+        _set_piven_model(model, model_copy)
     elif isinstance(model, PivenKerasRegressor):
         _save_piven_model_wrapper(model, ppath, "piven_model.h5")
     else:
@@ -97,8 +143,7 @@ def save_piven_model(
             "Model must be of type 'Pipeline', 'PivenKerasRegressor'"
             + " or 'PivenTransformedTargetRegressor'"
         )
-    # Return path
-    return path
+    return model
 
 
 def _load_model_config(path: Path) -> dict:
