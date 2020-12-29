@@ -95,7 +95,12 @@ class TestPivenMlpExperiment:
     def test_experiment_io(self, mock_data, experiment):
         x_train, x_valid, y_train, y_valid = mock_data
         experiment.build_model()
-        experiment.fit(x_train, y_train, model__epochs=3)
+        experiment.fit(
+            x_train,
+            y_train,
+            model__epochs=3,
+            model__callbacks=[tf.keras.callbacks.ReduceLROnPlateau(patience=1)],
+        )
         with tempfile.TemporaryDirectory() as tmpdir:
             experiment.save(tmpdir)
             assert (Path(tmpdir) / "experiment_params.json").is_file()

@@ -31,6 +31,13 @@ def _save_piven_model_wrapper(
     with (path / "piven_model_history.json").open("w") as outfile:
         # From np array --> list
         history = {k: list(v) for k, v in model.history.items()}
+        # I'm making this explicit because I've not seen this in other cases, but:
+        #  when using ReduceLROnPlateau, the learning rate is added to the history
+        #  dictionary. The values are np.float32 and these are not serializable.
+        #  I also don't want to cast everything to floats, so I'm doing this explicitly
+        #  this will likely fail when using other callbacks that do something similar.
+        if history.get("lr") is not None:
+            history["lr"] = [float(v) for v in history["lr"]]
         json.dump(history, outfile)
     return str(path / "piven_model_config.json")
 
