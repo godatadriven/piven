@@ -94,9 +94,13 @@ def piven_model(input_size, hidden_units):
     model.compile(optimizer="rmsprop", metrics=[picp, mpiw], 
                   loss=piven_loss(lambda_in=15.0, soften=160.0, 
                   alpha=0.05))
+    return model
 ```
 
-Then, you can create an experiment as follows:
+The most straightforward way of running your experiment is to subclass the `PivenBaseExperiment` class. This requires you
+to define a `build_model()` and `load()` method. In the former, you specify how the model should be defined. In the latter,
+you specify how the model should be loaded from disk. In practice, this will always look the same, but you need to pass the
+model build function.
 
 ```python
 from piven.experiments.base import PivenBaseExperiment
@@ -123,7 +127,19 @@ class MyPivenExperiment(PivenBaseExperiment):
         return run
 ```
 
-You can now call all methods defined as in the PivenBaseExperiment class. Check the PivenMlpExperiment class
-for a more detailed example. ADD LINK.
+To initialize the model, call:
+
+```python
+MyPivenExperiment(
+    input_size=3,
+    hidden_units=32
+)
+```
+
+Note that the inputs to `MyPivenExperiment` must match the inputs to the `piven_model` function.
+
+You can now call all methods defined as in the PivenBaseExperiment class. Check the 
+[PivenMlpExperiment class](https://gitlab.com/jasperginn/piven.py/-/blob/dev/src/piven/experiments/mlp_regressor.py)
+for a more detailed example.
 
 
