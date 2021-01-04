@@ -19,7 +19,7 @@ Using the piven module is quite straightforward. For a simple MLP with a piven o
 
 ```python
 import numpy as np
-from piven.experiments import PivenMlpExperiment
+from piven.models import PivenMlpModel
 from sklearn.preprocessing import StandardScaler
 # Make some data
 seed = 26783
@@ -36,7 +36,7 @@ x_valid = x[400:, :].reshape(-1, 1)
 y_valid = y[400:]
 
 # Build piven model
-model = PivenMlpExperiment(
+model = PivenMlpModel(
         input_dim=1,
         dense_units=(64, 64),
         dropout_rate=(0.1, 0.1),
@@ -103,13 +103,13 @@ you specify how the model should be loaded from disk. In practice, this will alw
 model build function.
 
 ```python
-from piven.experiments.base import PivenBaseExperiment
+from piven.models.base import PivenBaseModel
 from piven.scikit_learn.wrappers import PivenKerasRegressor
 from piven.scikit_learn.compose import PivenTransformedTargetRegressor
 from sklearn.preprocessing import StandardScaler
 
 
-class MyPivenExperiment(PivenBaseExperiment):
+class MyPivenExperiment(PivenBaseModel):
     def build_model():
         model = PivenKerasRegressor(build_fn=piven_model, **self.params)
         # Finally, normalize the output target

@@ -3,7 +3,7 @@ import tensorflow as tf
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.base import TransformerMixin
-from piven.experiments.base import PivenBaseExperiment
+from piven.models.base import PivenBaseModel
 from piven.regressors import build_keras_piven
 from piven.scikit_learn.compose import PivenTransformedTargetRegressor
 from piven.scikit_learn.wrappers import PivenKerasRegressor
@@ -70,7 +70,7 @@ def piven_model(
     return model
 
 
-class PivenMlpExperiment(PivenBaseExperiment):
+class PivenMlpModel(PivenBaseModel):
     def build_model(self, preprocess: Union[None, Pipeline, TransformerMixin] = None):
         # All build params are passed to init and should be checked here
         check_model_params(**self.params)
@@ -87,8 +87,8 @@ class PivenMlpExperiment(PivenBaseExperiment):
 
     @classmethod
     def load(cls, path: str):
-        experiment_config = PivenMlpExperiment.load_experiment_config(path)
-        model = PivenMlpExperiment.load_model_from_disk(piven_model, path)
+        experiment_config = PivenMlpModel.load_experiment_config(path)
+        model = PivenMlpModel.load_model_from_disk(piven_model, path)
         run = cls(**experiment_config)
         run.model = model
         return run

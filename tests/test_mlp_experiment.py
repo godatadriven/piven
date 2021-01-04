@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 import tensorflow as tf
 import numpy as np
-from piven.experiments import PivenMlpExperiment
+from piven.models import PivenMlpModel
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
@@ -11,7 +11,7 @@ from sklearn.compose import ColumnTransformer
 
 @pytest.fixture(scope="function")
 def experiment():
-    return PivenMlpExperiment(
+    return PivenMlpModel(
         input_dim=1,
         dense_units=(64, 64),
         dropout_rate=(0.1, 0.1),
@@ -74,7 +74,7 @@ class TestPivenMlpExperiment:
         # The only issue with the preprocessing pipeline is that the
         # number of features that was specified when building the model
         # no longer works, so we need to think about this and compute it manually.
-        experiment = PivenMlpExperiment(
+        experiment = PivenMlpModel(
             input_dim=6,  # 1 + 5 columns after applying ohe
             dense_units=(64, 64),
             dropout_rate=(0.1, 0.1),
@@ -104,7 +104,7 @@ class TestPivenMlpExperiment:
         with tempfile.TemporaryDirectory() as tmpdir:
             experiment.save(tmpdir)
             assert (Path(tmpdir) / "experiment_params.json").is_file()
-            _ = PivenMlpExperiment.load(path=tmpdir)
+            _ = PivenMlpModel.load(path=tmpdir)
 
     def test_experiment_scoring(self, mock_data, experiment):
         x_train, x_valid, y_train, y_valid = mock_data

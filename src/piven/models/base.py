@@ -10,7 +10,7 @@ from piven.metrics.numpy import coverage, pi_width, piven_loss as piven_loss_num
 from piven.utils import save_piven_model, load_piven_model
 
 
-class PivenBaseExperiment(metaclass=abc.ABCMeta):
+class PivenBaseModel(metaclass=abc.ABCMeta):
     def __init__(self, **model_params):
         self.params = model_params
         self.model = None
