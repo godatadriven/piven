@@ -76,7 +76,7 @@ You can use a Piven layer on any neural network architecture. REF REPO AUTHORS e
 This library uses the KerasRegressor wrapper from the tensorflow library to make scikit-compatible
 keras models.  
 
-Suppose that you want to create an experiment with a Piven output layer. You would first specify a build
+Suppose that you want to create an Model with a Piven output layer. You would first specify a build
 function like so:
 
 ```python
@@ -97,7 +97,7 @@ def piven_model(input_size, hidden_units):
     return model
 ```
 
-The most straightforward way of running your experiment is to subclass the `PivenBaseExperiment` class. This requires you
+The most straightforward way of running your Model is to subclass the `PivenBaseModel` class. This requires you
 to define a `build_model()` and `load()` method. In the former, you specify how the model should be defined. In the latter,
 you specify how the model should be loaded from disk. In practice, this will always look the same, but you need to pass the
 model build function.
@@ -109,7 +109,7 @@ from piven.scikit_learn.compose import PivenTransformedTargetRegressor
 from sklearn.preprocessing import StandardScaler
 
 
-class MyPivenExperiment(PivenBaseModel):
+class MyPivenModel(PivenBaseModel):
     def build_model():
         model = PivenKerasRegressor(build_fn=piven_model, **self.params)
         # Finally, normalize the output target
@@ -120,9 +120,9 @@ class MyPivenExperiment(PivenBaseModel):
 
     @classmethod
     def load(cls, path: str):
-        experiment_config = MyPivenExperiment.load_experiment_config(path)
-        model = MyPivenExperiment.load_model_from_disk(build_fn=piven_model, path)
-        run = cls(**experiment_config)
+        Model_config = MyPivenModel.load_Model_config(path)
+        model = MyPivenModel.load_model_from_disk(build_fn=piven_model, path)
+        run = cls(**Model_config)
         run.model = model
         return run
 ```
@@ -130,16 +130,16 @@ class MyPivenExperiment(PivenBaseModel):
 To initialize the model, call:
 
 ```python
-MyPivenExperiment(
+MyPivenModel(
     input_size=3,
     hidden_units=32
 )
 ```
 
-Note that the inputs to `MyPivenExperiment` must match the inputs to the `piven_model` function.
+Note that the inputs to `MyPivenModel` must match the inputs to the `piven_model` function.
 
-You can now call all methods defined as in the PivenBaseExperiment class. Check the 
-[PivenMlpExperiment class](https://gitlab.com/jasperginn/piven.py/-/blob/dev/src/piven/experiments/mlp_regressor.py)
+You can now call all methods defined as in the PivenBaseModel class. Check the 
+[PivenMlpModel class](https://gitlab.com/jasperginn/piven.py/-/blob/dev/src/piven/Models/mlp_regressor.py)
 for a more detailed example.
 
 
