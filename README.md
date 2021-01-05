@@ -6,7 +6,7 @@ This is an implementation of the model described in the following paper:
 
 I have copied some of the code from the [paper's code base](https://github.com/elisim/piven), and cite the author's paper where this is the case.
 
-<img src="https://github.com/elisim/piven/blob/master/piven_architecture.jpg" height=300 width=600></img>
+<img src="https://github.com/elisim/piven/blob/master/piven_architecture.jpg" height=300 width=800></img>
 
 ## In short
 
@@ -76,10 +76,9 @@ For additional examples, see the 'tests' and 'notebooks' folders.
 You can use a Piven layer on any neural network architecture. The authors of the Piven paper use it on top of
 a bunch of [CNN layers](https://github.com/elisim/piven/blob/master/imdb/main.py) to predict people's age.
 
-This library uses the KerasRegressor wrapper from the tensorflow library to make scikit-compatible
-keras models.  
-
-Suppose that you want to create an Model with a Piven output layer. You would first specify a build
+Suppose that you want to create an Model with a Piven output layer. Because this module uses the 
+[KerasRegressor](https://www.tensorflow.org/api_docs/python/tf/keras/wrappers/scikit_learn/KerasRegressor)  wrapper 
+from the tensorflow library to make scikit-compatible keras models, you would first specify a build
 function like so:
 
 ```python
@@ -144,5 +143,3 @@ Note that the inputs to `MyPivenModel` must match the inputs to the `piven_model
 You can now call all methods defined as in the PivenBaseModel class. Check the 
 [PivenMlpModel class](https://gitlab.com/jasperginn/piven.py/-/blob/dev/src/piven/Models/mlp_regressor.py)
 for a more detailed example.
-
-
