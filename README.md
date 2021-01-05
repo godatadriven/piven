@@ -168,4 +168,22 @@ shrinks down to 0, you will observe smaller PI at the cost of lower coverage.
 solver.
 
 The default settings are those used by the paper's authors. You should probably leave them as they are unless you
-know what you are doing. For further details, see pp. 4-5 of the paper cited above. 
+know what you are doing. For further details, see [1, pp. 4-5].
+
+## Details: uncertainty
+
+In statistics/ML, uncertainty is often subdivided into 'aleatoric' and 'epistemic' uncertainty. The former is associated
+with randomness in the sense that any experiment that is not deterministic shows variability in its outcomes. The latter
+type is associated with a lack of knowledge about the best model. Unlike aleatoric uncertainty, epistemic uncertainty 
+can be reduced by acquiring more information. [2].
+
+Prediction intervals are always wider than confidence intervals, since confidence intervals try to capture epistemic
+uncertainty only whereas prediction intervals seek to capture both types. See pages 2 and 5 in [1] for a discussion
+on quantifying uncertainty.
+
+## References
+
+[1] Simhayev, Eli, Gilad Katz, and Lior Rokach. "PIVEN: A Deep Neural Network for Prediction Intervals with Specific Value Prediction." arXiv preprint arXiv:2006.05139 (2020).
+
+[2] Hüllermeier, Eyke, and Willem Waegeman. "Aleatoric and epistemic uncertainty in machine learning: A tutorial introduction." arXiv preprint arXiv:1910.09457 (2019).
+ 
