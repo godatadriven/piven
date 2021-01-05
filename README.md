@@ -79,7 +79,7 @@ For additional examples, see the 'tests' and 'notebooks' folders.
 ## Creating your own model with Piven layer
 
 You can use a Piven layer on any neural network architecture. The authors of the Piven paper use it on top of
-a bunch of [CNN layers](https://github.com/elisim/piven/blob/master/imdb/main.py) to predict people's age.
+[a pre-trained CNN](https://github.com/elisim/piven/blob/master/imdb/main.py) to predict people's age.
 
 Suppose that you want to create an Model with a Piven output layer. Because this module uses the 
 [KerasRegressor](https://www.tensorflow.org/api_docs/python/tf/keras/wrappers/scikit_learn/KerasRegressor)  wrapper 
