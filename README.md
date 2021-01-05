@@ -75,7 +75,7 @@ This will save the metrics, keras model, and model predictions to the folder.
 
 For additional examples, see the 'tests' and 'notebooks' folders.
 
-## Creating your own model with Piven layer
+## Creating your own model with a piven output layer
 
 You can use a Piven layer on any neural network architecture. The authors of the Piven paper use it on top of
 [a pre-trained CNN](https://github.com/elisim/piven/blob/master/imdb/main.py) to predict people's age.
@@ -128,7 +128,7 @@ class MyPivenModel(PivenBaseModel):
     def load(cls, path: str):
         model_config = MyPivenModel.load_model_config(path)
         model = MyPivenModel.load_model_from_disk(build_fn=piven_model, path)
-        run = cls(**Model_config)
+        run = cls(**model_config)
         run.model = model
         return run
 ```
