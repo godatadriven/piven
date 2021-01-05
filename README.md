@@ -8,7 +8,9 @@ I have copied some of the code from the [paper's code base](https://github.com/e
 
 <figure>
     <img src="https://github.com/elisim/piven/blob/master/piven_architecture.jpg" height=250 width=800>
-    <figcaption>Piven layer, from from Simhayev, Gilad and Rokach (2020).</figcaption>
+    <figcaption>
+        <i>NN with piven layer, from from Simhayev, Gilad and Rokach (2020).</i>
+    </figcaption>
 </figure>
 
 ## In short
