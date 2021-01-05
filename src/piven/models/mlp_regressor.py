@@ -87,8 +87,8 @@ class PivenMlpModel(PivenBaseModel):
 
     @classmethod
     def load(cls, path: str):
-        experiment_config = PivenMlpModel.load_experiment_config(path)
+        model_config = PivenMlpModel.load_model_config(path)
         model = PivenMlpModel.load_model_from_disk(piven_model, path)
-        run = cls(**experiment_config)
+        run = cls(**model_config)
         run.model = model
         return run

@@ -92,7 +92,7 @@ class PivenBaseModel(metaclass=abc.ABCMeta):
         }
 
     @staticmethod
-    def load_experiment_config(path: str):
+    def load_model_config(path: str):
         if not (Path(path) / "experiment_params.json").is_file():
             raise FileNotFoundError(f"No experiment file found in {path}.")
         with (Path(path) / "experiment_params.json").open("r") as infile:
