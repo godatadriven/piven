@@ -31,16 +31,20 @@ def piven_loss(
     k_soft = _sigmoid((y_pred_pi_high - y_true) * soften) * _sigmoid(
         (y_true - y_pred_pi_low) * soften
     )
+    # 1 if obs between lower & upper PI, else 0
     k_hard = np.maximum(0.0, np.sign(y_pred_pi_high - y_true)) * np.maximum(
         0.0, np.sign(y_true - y_pred_pi_low)
     )
+    # Average of points between lower & upper PI
     mpiw_capt = (
         np.divide(
             np.sum(np.abs(y_pred_pi_high - y_pred_pi_low) * k_hard),
             np.sum(k_hard) + 0.001,
         ),
     )
+    # Coverage
     picp_soft = np.mean(k_soft)
+    # Interior point method --> lambda controls relative importantce of width v. coverage.
     qd_rhs_soft = (
         lambda_in * np.sqrt(n) * np.square(np.maximum(0.0, (1.0 - alpha) - picp_soft))
     )
