@@ -6,6 +6,8 @@ This is an implementation of the model described in the following paper:
 
 I have copied some of the code from the [paper's code base](https://github.com/elisim/piven), and cite the author's paper where this is the case.
 
+<img src="https://github.com/elisim/piven/blob/master/piven_architecture.jpg" height=300 width=600></img>
+
 ## In short
 
 A neural network with a Piven (Prediction Intervals with specific value prediction) output layer returns a point
@@ -69,9 +71,10 @@ This will save the metrics, keras model, and model predictions to the folder.
 
 For additional examples, see the 'tests' and 'notebooks' folders.
 
-## Creating your own Piven model
+## Creating your own model with Piven layer
 
-You can use a Piven layer on any neural network architecture. REF REPO AUTHORS example convo network.
+You can use a Piven layer on any neural network architecture. The authors of the Piven paper use it on top of
+a bunch of [CNN layers](https://github.com/elisim/piven/blob/master/imdb/main.py) to predict people's age.
 
 This library uses the KerasRegressor wrapper from the tensorflow library to make scikit-compatible
 keras models.  
