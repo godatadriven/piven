@@ -53,11 +53,11 @@ def sklearn_preprocessing_pipeline():
 
 class TestPivenMlpExperiment:
     def test_experiment_build_model(self, experiment):
-        experiment.build_model()
+        experiment.build()
 
     def test_experiment_fit_model_no_preprocess(self, mock_data, experiment):
         x_train, x_valid, y_train, y_valid = mock_data
-        experiment.build_model()
+        experiment.build()
         experiment.fit(
             x_train,
             y_train,
@@ -83,7 +83,7 @@ class TestPivenMlpExperiment:
             bias_init_high=3.0,
             lr=0.0001,
         )
-        experiment.build_model(preprocess=sklearn_preprocessing_pipeline)
+        experiment.build(preprocess=sklearn_preprocessing_pipeline)
         experiment.fit(
             x,
             y,
@@ -94,7 +94,7 @@ class TestPivenMlpExperiment:
 
     def test_experiment_io(self, mock_data, experiment):
         x_train, x_valid, y_train, y_valid = mock_data
-        experiment.build_model()
+        experiment.build()
         experiment.fit(
             x_train,
             y_train,
@@ -108,7 +108,7 @@ class TestPivenMlpExperiment:
 
     def test_experiment_scoring(self, mock_data, experiment):
         x_train, x_valid, y_train, y_valid = mock_data
-        experiment.build_model()
+        experiment.build()
         experiment.fit(x_train, y_train, model__epochs=3)
         y_pred, y_pi_low, y_pi_high = experiment.predict(
             x_valid, return_prediction_intervals=True
@@ -124,7 +124,7 @@ class TestPivenMlpExperiment:
 
     def test_experiment_logging(self, mock_data, experiment):
         x_train, x_valid, y_train, y_valid = mock_data
-        experiment.build_model()
+        experiment.build()
         experiment.fit(x_train, y_train, model__epochs=3)
         with tempfile.TemporaryDirectory() as tmpdir:
             experiment.log(x_valid, y_valid, tmpdir, model=True, predictions=True)

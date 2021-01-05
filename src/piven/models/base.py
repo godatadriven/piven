@@ -104,7 +104,7 @@ class PivenBaseModel(metaclass=abc.ABCMeta):
         return load_piven_model(build_fn, path)
 
     @abc.abstractmethod
-    def build_model(self, **build_params):
+    def build(self, **build_params):
         pass
 
     @classmethod

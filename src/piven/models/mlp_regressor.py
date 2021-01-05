@@ -71,7 +71,7 @@ def piven_model(
 
 
 class PivenMlpModel(PivenBaseModel):
-    def build_model(self, preprocess: Union[None, Pipeline, TransformerMixin] = None):
+    def build(self, preprocess: Union[None, Pipeline, TransformerMixin] = None):
         # All build params are passed to init and should be checked here
         check_model_params(**self.params)
         model = PivenKerasRegressor(build_fn=piven_model, **self.params)
