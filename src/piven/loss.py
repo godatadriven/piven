@@ -5,6 +5,20 @@ import tensorflow as tf
 def piven_loss(
     lambda_in: float = 15.0, soften: float = 160.0, alpha: float = 0.05
 ) -> Callable:
+    """
+    Piven loss function
+
+    :param lambda_in:
+    :param soften:
+    :param alpha:
+    :return: tf loss function for Piven models.
+
+    Taken from:
+
+        Simhayev, Eli, Gilad Katz, and Lior Rokach. "PIVEN: A Deep
+        Neural Network for Prediction Intervals with Specific Value
+        Prediction." arXiv preprint arXiv:2006.05139 (2020).
+    """
     # define loss fn
     def piven_loss(y_true: tf.Tensor, y_pred: tf.Tensor):
         y_u = y_pred[:, 0]
@@ -33,8 +47,7 @@ def piven_loss(
         )
         piven_loss_ = mpiw_capt + qd_rhs_soft  # final qd loss form
         y_eli = y_v * y_u + (1 - y_v) * y_l
-        y_eli = tf.reshape(y_eli, (-1, 1))
-        piven_loss_ += tf.losses.mean_squared_error(y_true, y_eli)
+        piven_loss_ += tf.losses.mean_squared_error(y_t, y_eli)
         return piven_loss_
 
     return piven_loss

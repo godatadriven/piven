@@ -10,6 +10,7 @@ __pycache__
 
 # Pytest
 .pytest_cache
+.coverage
 
 # Todos
 TODO.txt
@@ -18,6 +19,7 @@ update.txt
 # Notebooks
 notebooks/.ipynb_checkpoints
 notebooks/data
+*.npy
 
 # Ignore legacy code
 legacy/

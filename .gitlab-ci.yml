@@ -37,9 +37,9 @@ unit_tests:
     - ls -l
     - export PYTHONPATH="$PYTHONPATH:."
     - python -c "import sys;print(sys.path)"
-    - pip install pytest>=2.0.0
+    - pip install pytest>=2.0.0 coverage pytest-cov
     - pip install .
-    - pytest
+    - pytest --cov=piven
 
 pypi:
   stage: build

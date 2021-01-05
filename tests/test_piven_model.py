@@ -1,4 +1,4 @@
-from piven.metrics import coverage, pi_distance
+from piven.metrics.numpy import coverage, pi_width
 from sklearn.metrics import mean_squared_error
 import numpy as np
 
@@ -32,11 +32,11 @@ class TestPivenModel:
         cov = coverage(y_valid, pi_low, pi_high)
         assert 0.85 < cov < 0.99
         # Distance between PIs
-        pidist_lower = pi_distance(lower[xlinspace < -0.5], upper[xlinspace < -0.5])
-        pidist_middle = pi_distance(
+        pidist_lower = pi_width(lower[xlinspace < -0.5], upper[xlinspace < -0.5])
+        pidist_middle = pi_width(
             lower[(xlinspace >= -0.5) & (xlinspace <= 0.5)],
             upper[(xlinspace >= -0.5) & (xlinspace <= 0.5)],
         )
-        pidist_upper = pi_distance(lower[xlinspace > 0.5], upper[xlinspace > 0.5])
+        pidist_upper = pi_width(lower[xlinspace > 0.5], upper[xlinspace > 0.5])
         assert pidist_upper > pidist_middle
         assert pidist_lower > pidist_middle

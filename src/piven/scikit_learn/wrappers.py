@@ -6,7 +6,7 @@ from tensorflow.keras.wrappers.scikit_learn import KerasRegressor
 from tensorflow.python.keras.models import Sequential
 
 
-class PivenModelWrapper(KerasRegressor):
+class PivenKerasRegressor(KerasRegressor):
     def __init__(self, build_fn=None, **sk_params):
         super().__init__(build_fn, **sk_params)
         self.history = None
@@ -34,7 +34,6 @@ class PivenModelWrapper(KerasRegressor):
 
         fit_args = copy.deepcopy(self.filter_sk_params(Sequential.fit))
         fit_args.update(kwargs)
-
         history = self.model.fit(x, y, **fit_args)
         self.history = history.history
         return self.model
@@ -42,7 +41,19 @@ class PivenModelWrapper(KerasRegressor):
     def predict(
         self, x, return_prediction_intervals=True, **kwargs
     ) -> Union[np.array, Tuple[np.array, np.array, np.array]]:
-        """Predict method for a model with piven output layer"""
+        """
+        Predict method for a model with piven output layer
+        :param x: input data
+        :param return_prediction_intervals: If true, then this function will return
+                the lower and upper PI for each point estimate.
+        :return: 1 or 3 numpy arrays, depending on the input arguments.
+
+        Adapted from:
+
+            Simhayev, Eli, Gilad Katz, and Lior Rokach. "PIVEN: A Deep
+            Neural Network for Prediction Intervals with Specific Value
+            Prediction." arXiv preprint arXiv:2006.05139 (2020).
+        """
         kwargs = self.filter_sk_params(Sequential.predict, kwargs)
         yhat = self.model.predict(x, **kwargs)
         # Upper / lower bounds
