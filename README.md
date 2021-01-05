@@ -53,10 +53,9 @@ model = PivenMlpModel(
         lr=0.0001,
 )
 # Normalize input data
-model.build_model(preprocess=StandardScaler())
+model.build(preprocess=StandardScaler())
 # You can pass any arguments that you would also pass to a keras model
 model.fit(x_train, y_train, model__epochs=200, model__validation_split=.2)
-model.score()
 ```
 
 You can score the model by calling the `score()` method:
