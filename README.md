@@ -7,7 +7,7 @@ This is an implementation of the model described in the following paper:
 I have copied some of the code from the [paper's code base](https://github.com/elisim/piven), and cite the author's paper where this is the case.
 
 <figure>
-    <img src="https://github.com/elisim/piven/blob/master/piven_architecture.jpg" height=250 width=800>
+    <img src="https://github.com/elisim/piven/blob/master/piven_architecture.jpg?raw=true" height=250 width=800>
     <figcaption>
         <i>NN with piven layer, from from Simhayev, Gilad and Rokach (2020).</i>
     </figcaption>
