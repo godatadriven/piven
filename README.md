@@ -161,8 +161,8 @@ is the desired significance level.
 The piven loss function combines these objectives into a single loss. The loss function takes three arguments.
 
 1. ![eq](https://latex.codecogs.com/gif.latex?\alpha): the desired significance level. Given this value, we aim for PI 
-such that, if we re-run our experiments many times, the PI would include the true values on our outcome 
-metric (1 - ![eq](https://latex.codecogs.com/gif.latex?\alpha)) times.
+such that, if we re-run our experiments many times, the PI would include the true value on our outcome 
+ ![eq](https://latex.codecogs.com/gif.latex?(1-\alpha)&space;*&space;100) times.
 2. ![eq](https://latex.codecogs.com/gif.latex?\lambda): this is a hyperparameter controlling the relative importance 
 of PI width versus PI coverage. As ![eq](https://latex.codecogs.com/gif.latex?\lambda) shrinks down to 0, you will 
 observe narrower PI at the cost of lower coverage.
