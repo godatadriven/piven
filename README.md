@@ -150,23 +150,26 @@ for a more detailed example.
 
 ## Details: loss function
 
-The piven loss function is more complicated than regular loss functions in that it combines three objectives:
+The piven loss function is more complicated than a regular loss function in that it combines three objectives:
 
-1. The coverage (number of observations within lower and upper PI) should be approximately 1-*a*, where *a* is the 
-desired significance level.
+1. The coverage (number of observations within lower and upper PI) should be approximately 
+1-![eq](https://latex.codecogs.com/gif.latex?\alpha), where ![eq](https://latex.codecogs.com/gif.latex?\alpha) 
+is the desired significance level.
 2. The PI should not be too wide.
 3. The point-prediction should be as accurate as possible.
 
 The piven loss function combines these objectives into a single loss. The loss function takes three arguments.
 
-1. *alpha*: the desired significance level. Given this value, we aim for PI such that, if we re-run our experiments
-many times, the PI would include the true values on our outcome metric (1 - *alpha*) times.
-2. *lambda*: this is a hyperparameter controlling the relative importance of PI width versus PI coverage. As lambda
-shrinks down to 0, you will observe smaller PI at the cost of lower coverage.
-3. *soften*: technicality. Primarily used to ensure that the loss function can be optimized using a gradient-based
-solver.
+1. ![eq](https://latex.codecogs.com/gif.latex?\alpha): the desired significance level. Given this value, we aim for PI 
+such that, if we re-run our experiments many times, the PI would include the true value on our outcome 
+ ![eq](https://latex.codecogs.com/gif.latex?(1-\alpha)&space;*&space;100) times.
+2. ![eq](https://latex.codecogs.com/gif.latex?\lambda): this is a hyperparameter controlling the relative importance 
+of PI width versus PI coverage. As ![eq](https://latex.codecogs.com/gif.latex?\lambda) shrinks down to 0, you will 
+observe narrower PI at the cost of lower coverage.
+3. ![eq](https://latex.codecogs.com/gif.latex?s): technicality. Primarily used to ensure that the loss function can 
+be optimized using a gradient-based solver.
 
-The default settings are those used by the paper's authors. You should probably leave them as they are unless you
+The default settings are those used by the authors of the paper. You should probably leave them as they are unless you
 know what you are doing. For further details, see [1, pp. 4-5].
 
 ## Details: uncertainty
