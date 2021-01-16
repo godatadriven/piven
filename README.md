@@ -46,7 +46,7 @@ y_valid = y[400:]
 model = PivenMlpModel(
         input_dim=1,
         dense_units=(64, 64),
-        dropout_rate=(0.1, 0.1),
+        dropout_rate=(0.0, 0.0),
         lambda_=25.0,
         bias_init_low=-3.0,
         bias_init_high=3.0,
@@ -57,6 +57,10 @@ model.build(preprocess=StandardScaler())
 # You can pass any arguments that you would also pass to a keras model
 model.fit(x_train, y_train, model__epochs=200, model__validation_split=.2)
 ```
+
+The image below shows how the lower and upper PI change as we keep training the model
+
+<img src="piven_img_example.gif"></img>
 
 You can score the model by calling the `score()` method:
 
@@ -72,6 +76,13 @@ model.save("path-to-model-folder", model=True, predictions=True)
 ```
 
 This will save the metrics, keras model, and model predictions to the folder.
+
+If you want to load the model from disk, you need to pass the model build function (see below for more information).
+
+```python
+from piven.models import piven_mlp_model
+model = PivenMlpModel.load("path-to-model-folder", build_fn=piven_mlp_model)
+```
 
 For additional examples, see the 'tests' and 'notebooks' folders.
 
@@ -104,9 +115,7 @@ def piven_model(input_size, hidden_units):
 ```
 
 The most straightforward way of running your Model is to subclass the `PivenBaseModel` class. This requires you
-to define a `build_model()` and `load()` method. In the former, you specify how the model should be defined. In the latter,
-you specify how the model should be loaded from disk. In practice, this will always look the same, but you need to pass the
-model build function.
+to define a `build_model()` method in which you can add preprocessing pipelines etc. 
 
 ```python
 from piven.models.base import PivenBaseModel
@@ -116,21 +125,13 @@ from sklearn.preprocessing import StandardScaler
 
 
 class MyPivenModel(PivenBaseModel):
-    def build_model():
-        model = PivenKerasRegressor(build_fn=piven_model, **self.params)
+    def build_model(self, build_fn = piven_model):
+        model = PivenKerasRegressor(build_fn=build_fn, **self.params)
         # Finally, normalize the output target
         self.model = PivenTransformedTargetRegressor(
             regressor=model, transformer=StandardScaler()
         )
         return self
-
-    @classmethod
-    def load(cls, path: str):
-        model_config = MyPivenModel.load_model_config(path)
-        model = MyPivenModel.load_model_from_disk(build_fn=piven_model, path)
-        run = cls(**model_config)
-        run.model = model
-        return run
 ```
 
 To initialize the model, call:
