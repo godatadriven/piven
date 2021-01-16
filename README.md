@@ -115,7 +115,7 @@ def piven_model(input_size, hidden_units):
 ```
 
 The most straightforward way of running your Model is to subclass the `PivenBaseModel` class. This requires you
-to define a `build_model()` method in which you can add preprocessing pipelines etc. 
+to define a `build()` method in which you can add preprocessing pipelines etc. 
 
 ```python
 from piven.models.base import PivenBaseModel
@@ -125,7 +125,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 class MyPivenModel(PivenBaseModel):
-    def build_model(self, build_fn = piven_model):
+    def build(self, build_fn = piven_model):
         model = PivenKerasRegressor(build_fn=build_fn, **self.params)
         # Finally, normalize the output target
         self.model = PivenTransformedTargetRegressor(
@@ -146,7 +146,7 @@ MyPivenModel(
 Note that the inputs to `MyPivenModel` must match the inputs to the `piven_model` function.
 
 You can now call all methods defined as in the PivenBaseModel class. Check the 
-[PivenMlpModel class](https://gitlab.com/jasperginn/piven.py/-/blob/dev/src/piven/Models/mlp_regressor.py)
+[PivenMlpModel class](https://github.com/godatadriven/piven/blob/master/src/piven/models/mlp_regressor.py)
 for a more detailed example.
 
 ## Details: loss function
