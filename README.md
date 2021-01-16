@@ -46,7 +46,7 @@ y_valid = y[400:]
 model = PivenMlpModel(
         input_dim=1,
         dense_units=(64, 64),
-        dropout_rate=(0.1, 0.1),
+        dropout_rate=(0.0, 0.0),
         lambda_=25.0,
         bias_init_low=-3.0,
         bias_init_high=3.0,
@@ -57,6 +57,10 @@ model.build(preprocess=StandardScaler())
 # You can pass any arguments that you would also pass to a keras model
 model.fit(x_train, y_train, model__epochs=200, model__validation_split=.2)
 ```
+
+The image below shows how the lower and upper PI change as we keep training the model
+
+<img src="piven_img_example.gif"></img>
 
 You can score the model by calling the `score()` method:
 
