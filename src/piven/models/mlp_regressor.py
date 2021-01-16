@@ -51,7 +51,7 @@ def check_model_params(
 
 
 # Make build function for the model wrapper
-def piven_model(
+def piven_mlp_model(
     input_dim, dense_units, dropout_rate, lambda_, bias_init_low, bias_init_high, lr
 ):
     model = build_keras_piven(
@@ -74,7 +74,7 @@ class PivenMlpModel(PivenBaseModel):
     def build(self, preprocess: Union[None, Pipeline, TransformerMixin] = None):
         # All build params are passed to init and should be checked here
         check_model_params(**self.params)
-        model = PivenKerasRegressor(build_fn=piven_model, **self.params)
+        model = PivenKerasRegressor(build_fn=piven_mlp_model, **self.params)
         if preprocess is None:
             pipeline = Pipeline([("model", model)])
         else:
@@ -84,11 +84,3 @@ class PivenMlpModel(PivenBaseModel):
             regressor=pipeline, transformer=StandardScaler()
         )
         return self
-
-    @classmethod
-    def load(cls, path: str):
-        model_config = PivenMlpModel.load_model_config(path)
-        model = PivenMlpModel.load_model_from_disk(piven_model, path)
-        run = cls(**model_config)
-        run.model = model
-        return run

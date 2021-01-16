@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 import tensorflow as tf
 import numpy as np
-from piven.models import PivenMlpModel
+from piven.models import PivenMlpModel, piven_mlp_model
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
@@ -104,7 +104,7 @@ class TestPivenMlpExperiment:
         with tempfile.TemporaryDirectory() as tmpdir:
             experiment.save(tmpdir)
             assert (Path(tmpdir) / "experiment_params.json").is_file()
-            _ = PivenMlpModel.load(path=tmpdir)
+            _ = PivenMlpModel.load(path=tmpdir, build_fn=piven_mlp_model)
 
     def test_experiment_scoring(self, mock_data, experiment):
         x_train, x_valid, y_train, y_valid = mock_data
