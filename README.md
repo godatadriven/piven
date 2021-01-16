@@ -146,7 +146,7 @@ MyPivenModel(
 Note that the inputs to `MyPivenModel` must match the inputs to the `piven_model` function.
 
 You can now call all methods defined as in the PivenBaseModel class. Check the 
-[PivenMlpModel class](https://gitlab.com/jasperginn/piven.py/-/blob/dev/src/piven/Models/mlp_regressor.py)
+[PivenMlpModel class](https://github.com/godatadriven/piven/blob/master/src/piven/models/mlp_regressor.py)
 for a more detailed example.
 
 ## Details: loss function
