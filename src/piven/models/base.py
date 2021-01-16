@@ -201,5 +201,5 @@ class PivenBaseModel(metaclass=abc.ABCMeta):
         return model
 
     @abc.abstractmethod
-    def build(self, **build_params):
+    def build(self, build_fn: Callable, **build_params):
         pass
