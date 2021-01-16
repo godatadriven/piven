@@ -126,8 +126,8 @@ class MyPivenModel(PivenBaseModel):
 
     @classmethod
     def load(cls, path: str):
-        model_config = MyPivenModel.load_model_config(path)
-        model = MyPivenModel.load_model_from_disk(build_fn=piven_model, path)
+        model_config = MyPivenModel._load_model_config(path)
+        model = MyPivenModel._load_model_from_disk(build_fn=piven_model, path)
         run = cls(**model_config)
         run.model = model
         return run
