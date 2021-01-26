@@ -17,9 +17,11 @@ TODO.txt
 update.txt
 
 # Notebooks
-notebooks/.ipynb_checkpoints
-notebooks/data
+legacy/music/.ipynb_checkpoints
+legacy/music/data
 *.npy
 
 # Ignore legacy code
 legacy/
+
+blog_post.md
